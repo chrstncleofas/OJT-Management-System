@@ -5,10 +5,12 @@ import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = config('SECRET_KEY')
-DEBUG = config('DEBUG', default=False, cast=bool)
+SECRET_KEY='django-insecure-1q^_u(40*=ydaz*%lz0v&2rt0-b0(b$q)-_=!u#d9!5&1n0zyo'
+DEBUG=True
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=Csv())
+
+WSGI_APPLICATION = 'backend_side.wsgi.application'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -56,9 +58,6 @@ TEMPLATES = [
         },
     },
 ]
-
-WSGI_APPLICATION = 'backend_side.wsgi.application'
-
 
 DATABASES = {
     'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
