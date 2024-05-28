@@ -1,16 +1,12 @@
 from decouple import config, Csv
 import os
 from pathlib import Path
-import dj_database_url
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY='django-insecure-1q^_u(40*=ydaz*%lz0v&2rt0-b0(b$q)-_=!u#d9!5&1n0zyo'
-DEBUG=True
+SECRET_KEY = config('SECRET_KEY')
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ["*"]
-
-WSGI_APPLICATION = 'backend_side.wsgi.application'
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=Csv())
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -59,8 +55,17 @@ TEMPLATES = [
     },
 ]
 
+WSGI_APPLICATION = 'backend_side.wsgi.application'
+
 DATABASES = {
-    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DATABASE_NAME'),
+        'USER': config('DATABASE_USER'),
+        'PASSWORD': config('DATABASE_PASSWORD'),
+        'HOST': config('DATABASE_HOST'),
+        'PORT': config('DATABASE_PORT', cast=int),
+    }
 }
 
 AUTH_PASSWORD_VALIDATORS = [
