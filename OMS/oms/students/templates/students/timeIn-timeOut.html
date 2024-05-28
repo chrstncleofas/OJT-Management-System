@@ -1,0 +1,158 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/main-dashboard.css' %}">
+    <title>Student - OJT Management System</title>
+    <style>
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+        }
+        .navbar-brand img {
+            width: 50px;
+            height: 50px;
+            margin-right: 15px;
+        }
+        .navbar-brand p {
+            margin: 0;
+            margin-left: -10px;
+            color: darkblue;
+            font-size: 1.15rem;
+        }
+        .outer-container {
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 6px;
+        }
+        a{
+            color: white;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: none;
+        }
+        .shadow-box {
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 6px;
+            background-color: #fff;
+            width: 68%;
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex" id="wrapper">
+        <!-- Page Content and Navbar -->
+        <div id="page-content-wrapper">
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+                <a class="navbar-brand" href="{% url 'students:studentPage' %}">
+                    <img src="{% static 'img/Logo.png' %}" alt="Logo" style="width:50px; height: 50px; margin-left: 15px;">
+                    <p>OJT Management System</p>
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-user mr-2"></i>{{ firstName }} {{ lastName }}
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{% url 'students:changePassword' %}">Change Password</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'students:logout' %}">Logout</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="container mt-5 shadow-box">
+                <h2>Time In & Time Out</h2>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="form-group">
+                        <button type="submit" id="timeInBtn" class="btn btn-success" onclick="document.getElementById('id_action').value='IN'" disabled>Time In</button>
+                        <button type="submit" id="timeOutBtn" class="btn btn-danger" onclick="document.getElementById('id_action').value='OUT'" disabled>Time Out</button>
+                    </div>
+                </form>
+                <h3 class="mt-5">Time Logs</h3>
+                <table class="table table-bordered mt-3">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Action</th>
+                            <th>Timestamp</th>
+                            <th>Image</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in time_logs %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ log.action }}</td>
+                                <td>{{ log.timestamp|date:"F j, Y, g:i a" }}</td>
+                                <td>
+                                    {% if log.image %}
+                                        <img src="{{ log.image.url }}" alt="Time {{ log.action }} Image" style="width: 100px; height: 100px;">
+                                    {% else %}
+                                        No Image
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> 
+    <script>
+        $(".navbar-toggler").click(function(e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+
+        document.getElementById('id_image').addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                document.getElementById('timeInBtn').disabled = false;
+                document.getElementById('timeOutBtn').disabled = false;
+            }
+        });
+
+        document.getElementById('id_image').addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                document.getElementById('timeBtn').disabled = false;
+            }
+        });
+
+        // Function to toggle between "Time In" and "Time Out"
+        function toggleTime() {
+            var timeBtn = document.getElementById('timeBtn');
+            if (timeBtn.value === 'IN') {
+                timeBtn.value = 'OUT';
+                timeBtn.classList.remove('btn-success');
+                timeBtn.classList.add('btn-danger');
+                timeBtn.textContent = 'Time Out';
+            } else {
+                timeBtn.value = 'IN';
+                timeBtn.classList.remove('btn-danger');
+                timeBtn.classList.add('btn-success');
+                timeBtn.textContent = 'Time In';
+            }
+        }
+    </script>
+</body>
+</html>
