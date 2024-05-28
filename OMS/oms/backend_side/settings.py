@@ -20,12 +20,14 @@ INSTALLED_APPS = [
     'corsheaders',
     'app.apps.AppConfig',
     'students.apps.StudentsConfig',
-    'storages'
+    'storages',
+    'whitenoise.runserver_nostatic'
 ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
