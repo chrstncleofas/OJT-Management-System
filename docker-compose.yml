@@ -14,10 +14,10 @@ services:
   web:
     container_name: ojtapp
     build:
-      context: ./OMS
+      context: .
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./OMS:/usr/src/app
+      - .:/usr/src/app
     ports:
       - "8001:8000"
     depends_on:
