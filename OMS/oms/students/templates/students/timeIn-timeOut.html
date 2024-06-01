@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="{% static 'css/main-dashboard.css' %}">
     <title>Student - OJT Management System</title>
     <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f8f9fa;
+        }
         .navbar-brand {
             display: flex;
             align-items: center;
@@ -30,21 +34,68 @@
             padding: 20px;
             margin-top: 20px;
             border-radius: 6px;
+            background-color: #fff;
         }
-        a{
+        .card-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .card {
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 6px;
+            background-color: #fff;
+            flex: 1;
+        }
+        .card.fixed-height {
+            max-height: 400px; /* Set your desired height here */
+            overflow-y: auto;
+        }
+        .upload-box {
+            border: 2px dashed #ccc;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 150px;
+            margin-bottom: 20px;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            background-color: #f8f9fa;
+        }
+        .upload-box input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .upload-box img {
+            max-width: 100%;
+            max-height: 100%;
+            display: none;
+        }
+        .upload-box::before {
+            content: 'Choose File';
+            color: #888;
+            font-size: 16px;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+        a {
             color: white;
             text-decoration: none;
         }
         a:hover {
             text-decoration: none;
         }
-        .shadow-box {
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-            padding: 20px;
-            border-radius: 6px;
-            background-color: #fff;
-            width: 68%;
-        }
+        
     </style>
 </head>
 <body>
@@ -54,7 +105,7 @@
             <!-- Navbar -->
             <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
                 <a class="navbar-brand" href="{% url 'students:studentPage' %}">
-                    <img src="{% static 'img/Logo.png' %}" alt="Logo" style="width:50px; height: 50px; margin-left: 15px;">
+                    <img src="{% static 'img/Logo.png' %}" alt="Logo">
                     <p>OJT Management System</p>
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,43 +126,54 @@
                     </ul>
                 </div>
             </nav>
-            <div class="container mt-5 shadow-box">
-                <h2>Time In & Time Out</h2>
-                <form method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <div class="form-group">
-                        <button type="submit" id="timeInBtn" class="btn btn-success" onclick="document.getElementById('id_action').value='IN'" disabled>Time In</button>
-                        <button type="submit" id="timeOutBtn" class="btn btn-danger" onclick="document.getElementById('id_action').value='OUT'" disabled>Time Out</button>
+            <div class="container mt-5 card-container">
+                <div class="card col-md-3">
+                    <div class="mt-4">
+                        <h5>Time In & Time Out</h5>
+                        <p>Welcome, {{ firstName }} {{ lastName }}</p>
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="upload-box" id="uploadBox">
+                                {{ form.image }}
+                                <img id="preview" src="#" alt="Preview Image">
+                            </div>
+                            {{ form.action }}
+                            <div class="form-group" style="display: flex; justify-content: space-between;">
+                                <button type="submit" id="timeInBtn" class="btn btn-success" onclick="document.getElementById('id_action').value='IN'" disabled>Time In</button>
+                                <button type="submit" id="timeOutBtn" class="btn btn-danger" onclick="document.getElementById('id_action').value='OUT'" disabled>Time Out</button>
+                            </div>
+                        </form>
                     </div>
-                </form>
-                <h3 class="mt-5">Time Logs</h3>
-                <table class="table table-bordered mt-3">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Action</th>
-                            <th>Timestamp</th>
-                            <th>Image</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for log in time_logs %}
+                </div>
+                <div class="card fixed-height">
+                    <h3>Time Logs</h3>
+                    <table class="table table-bordered mt-3">
+                        <thead>
                             <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td>{{ log.action }}</td>
-                                <td>{{ log.timestamp|date:"F j, Y, g:i a" }}</td>
-                                <td>
-                                    {% if log.image %}
-                                        <img src="{{ log.image.url }}" alt="Time {{ log.action }} Image" style="width: 100px; height: 100px;">
-                                    {% else %}
-                                        No Image
-                                    {% endif %}
-                                </td>
+                                <th>#</th>
+                                <th>Action</th>
+                                <th>Timestamp</th>
+                                <th>Image</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {% for log in time_logs %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ log.action }}</td>
+                                    <td>{{ log.timestamp|date:"F j, Y, g:i a" }}</td>
+                                    <td>
+                                        {% if log.image %}
+                                            <img src="{{ log.image.url }}" alt="Time {{ log.action }} Image" style="width: 100px; height: 100px;">
+                                        {% else %}
+                                            No Image
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -131,28 +193,20 @@
                 document.getElementById('timeOutBtn').disabled = false;
             }
         });
-
-        document.getElementById('id_image').addEventListener('change', function() {
-            if (this.files && this.files[0]) {
-                document.getElementById('timeBtn').disabled = false;
+        // 
+        function previewImage(event) {
+            var preview = document.getElementById('preview');
+            var file = document.getElementById('id_image').files[0];
+            var reader = new FileReader();
+            reader.onload = function() {
+                preview.src = reader.result;
+                preview.style.display = 'block';
             }
-        });
-
-        // Function to toggle between "Time In" and "Time Out"
-        function toggleTime() {
-            var timeBtn = document.getElementById('timeBtn');
-            if (timeBtn.value === 'IN') {
-                timeBtn.value = 'OUT';
-                timeBtn.classList.remove('btn-success');
-                timeBtn.classList.add('btn-danger');
-                timeBtn.textContent = 'Time Out';
-            } else {
-                timeBtn.value = 'IN';
-                timeBtn.classList.remove('btn-danger');
-                timeBtn.classList.add('btn-success');
-                timeBtn.textContent = 'Time In';
+            if (file) {
+                reader.readAsDataURL(file);
             }
         }
+        document.getElementById('id_image').addEventListener('change', previewImage);
     </script>
 </body>
 </html>

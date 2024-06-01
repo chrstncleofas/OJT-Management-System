@@ -41,8 +41,10 @@ class ChangePasswordForm(forms.Form):
 class TimeLogForm(forms.ModelForm):
     class Meta:
         model = TimeLog
-        fields = ['action', 'image']
-        widgets = {
-            'action': forms.HiddenInput(),
-            'image': forms.FileInput(attrs={'class': 'form-control-file'}),
-        }
+        fields = ['image', 'action']
+
+    def __init__(self, *args, **kwargs):
+        super(TimeLogForm, self).__init__(*args, **kwargs)
+        self.fields['image'].required = True
+        self.fields['image'].widget.attrs.update({'accept': 'image/*'})
+        self.fields['action'].widget = forms.HiddenInput()

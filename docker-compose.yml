@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    container_name: ojtapp
+    build:
+      context: ./OMS
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./OMS/usr/src/app
+    ports:
+      - "8001:8000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE=postgres
+      - SQL_HOST=db
+      - SQL_PORT=5432
+      - SQL_DATABASE=${POSTGRES_DB}
+      - SQL_USER=${POSTGRES_USER}
+      - SQL_PASSWORD=${POSTGRES_PASSWORD}
+      - DEBUG=1
+      - SECRET_KEY=django-insecure-1q^_u(40*=ydaz*%lz0v&2rt0-b0(b$q)-_=!u#d9!5&1n0zyo
+      - ALLOWED_HOSTS=localhost,127.0.0.1
+
+volumes:
+  postgres_data:

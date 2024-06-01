@@ -9,7 +9,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from students.forms import StudentRegistrationForm, UserForm, ChangePasswordForm, TimeLogForm
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, JsonResponse
 
 def studentHome(request) -> HttpResponse:
     return render(request, 'students/student-base.html')
