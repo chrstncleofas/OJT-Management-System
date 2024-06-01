@@ -21,6 +21,8 @@ django-storages = "^1.14.3"
 python-decouple = "^3.8"
 dj-database-url = "^2.1.0"
 zappa = "^0.59.0"
+celery = "^5.4.0"
+redis = "^5.0.4"
 
 
 [build-system]
