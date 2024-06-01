@@ -15,7 +15,7 @@ services:
     container_name: ojtapp
     build:
       context: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: python OMS/oms/manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/usr/src/app
     ports:

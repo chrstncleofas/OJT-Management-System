@@ -10,11 +10,11 @@ then
     echo "PostgreSQL started"
 fi
 
-# Run migrations
-python manage.py migrate
+# Apply database migrations
+python OMS/oms/manage.py migrate
 
 # Collect static files
-python manage.py collectstatic --noinput
+python OMS/oms/manage.py collectstatic --noinput
 
 # Run the Django server
 exec "$@"
