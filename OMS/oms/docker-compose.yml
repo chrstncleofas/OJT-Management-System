@@ -7,19 +7,18 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
   web:
-    container_name: ojtapp
+    container_name: ojtsystem
     build:
       context: .
-    command: python OMS/oms/manage.py runserver 0.0.0.0:8000
+    command: ["sh", "/usr/src/app/entrypoint.sh"]
     volumes:
       - .:/usr/src/app
     ports:
-      - "8001:8000"
+      - "80:80"
     depends_on:
       - db
     environment:

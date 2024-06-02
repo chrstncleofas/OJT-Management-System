@@ -120,7 +120,7 @@ def user_login(request):
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user:
-            if user.is_superuser:
+            if user.is_staff:
                 login(request, user)
                 return render(request, 'app/loginSuccess.html', {'message': 'Login successful!'})
             else:
@@ -133,15 +133,22 @@ def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save(commit=False)
+            user.is_staff = True
+            user.save()
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            return redirect('home')
+            messages.success(request, 'Registration successful.')
+            return render(request, 'app/success.html', {'message': 'Registration successful!'})
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
     else:
         form = CustomUserCreationForm()
-    return render(request, HOME_URL_PATH, {'form': form})
+    return render(request, 'app/register.html', {'form': form})
 
 def approve_student(request, id):
     student = TableStudents.objects.get(id=id)
@@ -156,7 +163,9 @@ def logoutView(request) -> HttpResponseRedirect:
     return redirect(home)
 
 def is_admin(user):
-    return user.is_superuser
+    user_admin = user.is_superuser
+    user_staff = user.is_staff
+    return user_admin or user_staff
 
 @user_passes_test(is_admin)
 def timeSheet(request):

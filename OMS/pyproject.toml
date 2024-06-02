@@ -23,6 +23,7 @@ dj-database-url = "^2.1.0"
 zappa = "^0.59.0"
 celery = "^5.4.0"
 redis = "^5.0.4"
+python-dotenv = "^1.0.1"
 
 
 [build-system]
