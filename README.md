@@ -1,4 +1,4 @@
-OJT Management System
+"OJT Management System"
 
 Welcome to the OJT Management System project! This Django-based system helps manage on-the-job training activities for students and organizations.
 
