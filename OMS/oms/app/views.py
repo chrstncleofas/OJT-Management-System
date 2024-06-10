@@ -140,7 +140,6 @@ def register(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            messages.success(request, 'Registration successful.')
             return render(request, 'app/success.html', {'message': 'Registration successful!'})
         else:
             for field, errors in form.errors.items():
@@ -159,7 +158,6 @@ def approve_student(request, id):
 
 def logoutView(request) -> HttpResponseRedirect:
     logout(request)
-    messages.success(request, "Logged Out Successfully!!")
     return redirect(home)
 
 def is_admin(user):

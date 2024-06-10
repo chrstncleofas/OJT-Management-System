@@ -1,9 +1,12 @@
+import base64
 from django.urls import reverse
 from django.utils import timezone
 from django.contrib import messages
-from students.models import TableStudents, TimeLog
+from django.utils.timezone import now
+from django.core.files.base import ContentFile 
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
+from students.models import TableStudents, TimeLog
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -19,7 +22,7 @@ def studentDashboard(request) -> HttpResponse:
 
 
 @login_required
-def mainDashboard(request) -> HttpResponse:
+def welcomeDashboard(request) -> HttpResponse:
     user = request.user
     student = get_object_or_404(TableStudents, user=user)
     firstName = student.Firstname
@@ -30,6 +33,27 @@ def mainDashboard(request) -> HttpResponse:
         {
             'firstName': firstName,
             'lastName': lastName,
+        }
+    )
+
+def mainPageForDashboard(request) -> HttpResponse:
+    user = request.user
+    student = get_object_or_404(TableStudents, user=user)
+    firstName = student.Firstname
+    lastName = student.Lastname
+    email = student.Email
+    course = student.Course
+    year = student.Year
+
+    return render(
+        request,
+        'students/student-dashboard.html',
+        {
+            'firstName': firstName,
+            'lastName': lastName,
+            'email': email,
+            'course': course,
+            'year': year,
         }
     )
 
@@ -52,6 +76,8 @@ def TimeInAndTimeOut(request):
     else:
         form = TimeLogForm()
 
+    current_time = now()
+
     firstName = student.Firstname
     lastName = student.Lastname
     time_logs = TimeLog.objects.filter(student=student).order_by('-timestamp')
@@ -63,6 +89,7 @@ def TimeInAndTimeOut(request):
             'firstName': firstName,
             'lastName': lastName,
             'time_logs': time_logs,
+            'current_time': current_time,
             'form': form,
         }
     )
@@ -146,12 +173,13 @@ def studentRegister(request):
             student.Email = user.email
             student.Username = user.username
             student.Password = user.password
-            student.save()     
+            student.save()
             messages.success(request, 'Registration successful. Waiting for admin approval.')
-            return render(request, 'students/success.html', {'message': 'Registration successful!'})
+            return redirect('students:success')
     else:
         user_form = UserForm()
         student_form = StudentRegistrationForm()
+
     return render(request, 'students/register.html', {'user_form': user_form, 'student_form': student_form})
 
 def studentLogin(request):
@@ -185,5 +213,4 @@ def loginSuccess(request):
 
 def studentLogout(request) -> HttpResponseRedirect:
     logout(request)
-    messages.success(request, "Logged Out Successfully!!")
     return redirect(reverse('students:home'))

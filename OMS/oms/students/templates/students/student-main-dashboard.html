@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/main-dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <title>Student - OJT Management System</title>
     <style>
         .navbar-brand {
@@ -25,19 +25,6 @@
             color: darkblue;
             font-size: 1.15rem;
         }
-        .outer-container {
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-            padding: 20px;
-            margin-top: 20px;
-            border-radius: 6px;
-        }
-        a{
-            color: white;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: none;
-        }
         .footer {
             background-color: #f8f9fa;
             padding: 20px 0;
@@ -48,124 +35,112 @@
             margin: 0;
             color: #6c757d;
         }
+        .outer-container {
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            margin-top: 10px;
+            border-radius: 6px;
+        }
     </style>
 </head>
 <body>
-    <div class="d-flex" id="wrapper">
-        <!-- Page Content and Navbar -->
-        <div id="page-content-wrapper">
-            <!-- Navbar -->
-            <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-                <a class="navbar-brand" href="{% url 'students:studentPage' %}">
-                    <img src="{% static 'img/Logo.png' %}" alt="Logo" style="width:50px; height: 50px; margin-left: 15px;">
-                    <p>OJT Management System</p>
-                </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-user mr-2"></i>{{ firstName }} {{ lastName }}
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="{% url 'students:changePassword' %}">Change Password</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{% url 'students:logout' %}">Logout</a>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-            <!-- Content -->
-            <div class="container">
-                <div class="outer-container">
-                    <h1 class="mt-0">Dashboard</h1>
-                    <div class="row">
-                        <div class="col-lg-3 col-md-6">
-                            <a href="{% url 'students:profile' %}">
-                                <div class="card text-white bg-primary">
-                                    <div class="card-body d-flex align-items-center">
-                                        <i class="fas fa-user icon fa-3x"></i>
-                                        <div class="ml-3">
-                                            <div>Profile</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-lg-3 col-md-6">
-                            <a href="#">
-                                <div class="card text-white bg-info">
-                                    <div class="card-body d-flex align-items-center">
-                                        <i class="fas fa-bullhorn icon fa-3x"></i>
-                                        <div class="ml-3">
-                                            <div>Announcement</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-lg-3 col-md-6">
-                            <a href="#">
-                                <div class="card text-white bg-warning">
-                                    <div class="card-body d-flex align-items-center">
-                                        <i class="fas fa-folder-open icon fa-3x"></i>
-                                        <div class="ml-3">
-                                            <div>Requirements</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-lg-3 col-md-6">
-                            <a href="{% url 'students:TimeInAndTimeOut' %}">
-                                <div class="card text-white bg-success">
-                                    <div class="card-body d-flex align-items-center">
-                                        <i class="fas fa-clock icon fa-3x"></i>
-                                        <div class="ml-3">
-                                            <div>Time In & Time Out</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="row mt-4">
-                        <div class="col-lg-3 col-md-6">
-                            <a href="#">
-                                <div class="card text-white bg-secondary">
-                                    <div class="card-body d-flex align-items-center">
-                                        <i class="fas fa-chart-line icon fa-3x"></i>
-                                        <div class="ml-3">
-                                            <div>Reports</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div> <!--End Content -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{% url 'students:studentPage' %}">
+            <img src="{% static 'img/Logo.png' %}" alt="Logo" style="width:50px; height: 50px; margin-left: 15px;">
+            <p>OJT Management System</p>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link text-color-dark" href="{% url 'students:Dashboard' %}">Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-color-dark" href="">Announcement</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-color-dark" href="">Requirements</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-color-dark" href="#" data-toggle="modal" data-target="#logout">Logout</a>
+            </li>
+        </ul>
         </div>
-        <!-- Footer -->
+    </nav>
+    <div class="modal fade" id="logout" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Logout</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure do want to leave this page</p>
+                </div>
+                <div class="modal-footer">
+                    <form>
+                        <a href="{% url 'students:logout' %}" class="btn btn-primary">Logout</a>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
+    <!--Card  -->
+    <div class="container mt-5">
+        <div class="outer-container">
+            <h5 class="mb-4">All Features</h5>
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-bullhorn"></i> Announcement</h5>
+                            <p class="card-text">Allow the student to check the announcement that will come from the CCIT Building</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-file-alt"></i> Submission of Requirements</h5>
+                            <p class="card-text">Allow the students to submit their requirement to be able to enroll OJT subject.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-chart-line"></i> Accomplisment Report</h5>
+                            <p class="card-text">Allow the student to check daily activities using this accomplishment report features.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-clock"></i> Time In & Time Out</h5>
+                            <p class="card-text">Allow the student to be able to time in and time out with the features of the OJT System accurately</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer -->
     <footer class="footer">
-        <div class="container text-center">
+        <div class="container">
             <p>&copy; <span id="currentYear"></span> OJT Management System. All Rights Reserved.</p>
         </div>
     </footer>
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> 
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         document.getElementById('currentYear').textContent = new Date().getFullYear();
-        $(".navbar-toggler").click(function(e) {
-            e.preventDefault();
-            $("#wrapper").toggleClass("toggled");
-        });
     </script>
 </body>
 </html>

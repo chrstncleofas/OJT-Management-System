@@ -10,11 +10,11 @@ if [ "$DATABASE" = "postgres" ]; then
     echo "PostgreSQL started"
 fi
 
+# Apply database makemigrations
+python manage.py makemigrations
+
 # Apply database migrations
 python manage.py migrate
-
-# Apply create superuser
-python manage.py createsuperuser
 
 # Run Django server
 python manage.py runserver 0.0.0.0:80
