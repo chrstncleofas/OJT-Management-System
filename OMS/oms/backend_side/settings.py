@@ -66,27 +66,27 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend_side.wsgi.application'
 
 # Database configuration
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('SQL_DATABASE'),
-        'USER': config('SQL_USER'),
-        'PASSWORD': config('SQL_PASSWORD'),
-        'HOST': config('SQL_HOST'),
-        'PORT': config('SQL_PORT', cast=int),
-    }
-}
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': config('POSTGRES_DB'),
-#         'USER': config('POSTGRES_USER'),
-#         'PASSWORD': config('POSTGRES_PASSWORD'),
-#         'HOST': 'localhost',
-#         'PORT': '5432',
+#         'NAME': config('SQL_DATABASE'),
+#         'USER': config('SQL_USER'),
+#         'PASSWORD': config('SQL_PASSWORD'),
+#         'HOST': config('SQL_HOST'),
+#         'PORT': config('SQL_PORT', cast=int),
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('POSTGRES_DB'),
+        'USER': config('POSTGRES_USER'),
+        'PASSWORD': config('POSTGRES_PASSWORD'),
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
