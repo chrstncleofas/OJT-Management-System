@@ -14,7 +14,7 @@
     <div class="d-flex" id="wrapper">
         <!-- Sidebar -->
         <div class="bg-light border-right" id="sidebar-wrapper">
-            <div class="sidebar-heading">OJT Management System</div>
+            <a href="{% url 'dashboard' %}" style="text-decoration: none !important; color: black !important;"><div class="sidebar-heading">OJT Management System</div></a>
             <div class="list-group list-group-flush">
                 <a href="{% url 'mainDashboard' %}" class="list-group-item list-group-item-action bg-light">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
@@ -96,17 +96,6 @@
                                 </div>
                             </div>
                         </a>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="card text-white bg-danger">
-                            <div class="card-body">
-                                <i class="fas fa-times-circle icon"></i>
-                                <div>
-                                    <div class="count">0</div>
-                                    <div>Reject Registration</div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

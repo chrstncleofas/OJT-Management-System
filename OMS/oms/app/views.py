@@ -10,7 +10,7 @@ from app.forms import EditProfileForm
 from django.db.models import Sum
 from django.contrib import messages
 from django.http import JsonResponse
-from students.models import TableStudents, TimeLog
+from students.models import Tablestudent, TimeLog
 from django.core.mail import send_mail
 from app.forms import CustomUserCreationForm
 from .forms import CustomPasswordChangeForm
@@ -40,10 +40,10 @@ def mainDashboard(request):
     firstName = admin.first_name
     lastName = admin.last_name
     # 
-    pending_students = TableStudents.objects.filter(is_approved=False)
+    pending_students = Tablestudent.objects.filter(is_approved=False)
     pending_count = pending_students.count()
     # 
-    approve = TableStudents.objects.filter(is_approved=True)
+    approve = Tablestudent.objects.filter(is_approved=True)
     approve_count = approve.count()
     return render(
         request,
@@ -104,7 +104,7 @@ def getAllPendingRegister(request):
     firstName = admin.first_name
     lastName = admin.last_name
     # 
-    students = TableStudents.objects.filter(is_approved=False)
+    students = Tablestudent.objects.filter(is_approved=False)
     return render(request, PENDING_APPLICATION, {
         'getAllPendingRegister': students,
         'firstName': firstName,
@@ -150,7 +150,7 @@ def register(request):
     return render(request, 'app/register.html', {'form': form})
 
 def approve_student(request, id):
-    student = TableStudents.objects.get(id=id)
+    student = Tablestudent.objects.get(id=id)
     student.is_approved = True
     student.save()
     messages.success(request, f'{student.Firstname} {student.Lastname} has been approved.')
@@ -167,7 +167,7 @@ def is_admin(user):
 
 @user_passes_test(is_admin)
 def timeSheet(request):
-    students = TableStudents.objects.all()
+    students = Tablestudent.objects.all()
     selected_student = None
     time_logs = []
     total_hours = 0
@@ -180,7 +180,7 @@ def timeSheet(request):
 
     if request.method == 'POST':
         student_id = request.POST.get('student_id')
-        selected_student = get_object_or_404(TableStudents, id=student_id)
+        selected_student = get_object_or_404(Tablestudent, id=student_id)
         time_logs = TimeLog.objects.filter(student=selected_student).order_by('timestamp')
 
         total_work_seconds = 0
@@ -216,3 +216,44 @@ def timeSheet(request):
             'lastName': lastName
         }
     )
+
+def viewTimeLogs(request, student_id):
+    student = get_object_or_404(Tablestudent, id=student_id)
+    firstName = student.Firstname
+    lastName = student.Lastname
+    time_logs = []
+    total_hours = 0
+    required_hours = 600
+
+    selected_student = get_object_or_404(Tablestudent, id=student_id)
+    time_logs = TimeLog.objects.filter(student=selected_student).order_by('timestamp')
+
+    total_work_seconds = 0
+    daily_start = None
+    daily_total = timedelta()
+
+    for log in time_logs:
+        if log.action == 'IN':
+            daily_start = log.timestamp
+        elif log.action == 'OUT' and daily_start:
+            work_period = log.timestamp - daily_start
+            if work_period > timedelta(hours=1):
+                work_period -= timedelta(hours=1)
+            daily_total += work_period
+            daily_start = None
+
+    total_work_seconds = daily_total.total_seconds()
+    total_hours = total_work_seconds / 3600
+
+    remaining_hours = required_hours - total_hours
+    
+    context = {
+        'time_logs': time_logs,
+        'total_hours': total_hours,
+        'required_hours': required_hours,
+        'remaining_hours': remaining_hours,
+        'firstName': firstName,
+        'lastName': lastName
+    }
+
+    return render(request, 'app/viewTimeLogs.html', context)

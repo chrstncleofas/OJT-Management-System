@@ -1,6 +1,11 @@
 from django import forms
 from app.models import CustomUser
-from students.models import TableStudents, TimeLog
+from students.models import Tablestudent, TimeLog
+
+COURSE_CHOICES = [
+    ('Computer Science', 'Computer Science'),
+    ('Information Technology', 'Information Technology'),
+]
 
 class UserForm(forms.ModelForm):
     password = forms.CharField(
@@ -26,9 +31,13 @@ class UserForm(forms.ModelForm):
         cleaned_data = super().clean()
         password = cleaned_data.get("password")
         confirm_password = cleaned_data.get("confirm_password")
+        email = cleaned_data.get("email")
 
         if password and confirm_password and password != confirm_password:
             self.add_error('confirm_password', "Password and Confirm Password do not match")
+
+        if CustomUser.objects.filter(email=email).exists():
+            self.add_error('email', "Email already exists. Please use a different email address.")
         
         return cleaned_data
 
@@ -39,19 +48,25 @@ class StudentRegistrationForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Student ID'})
     )
 
+    Course = forms.ChoiceField(
+        choices=COURSE_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
     class Meta:
-        model = TableStudents
-        fields = ['StudentID', 'Firstname', 'Lastname', 'Course', 'Year']
+        model = Tablestudent
+        fields = ['StudentID', 'Firstname', 'Middlename', 'Lastname', 'Course', 'Year']
         widgets = {
             'Firstname': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter first name'}),
+            'Middlename': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter middle name'}),
             'Lastname': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter last name'}),
-            'Course': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter course'}),
             'Year': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter year'}),
         }
 
     def __init__(self, *args, **kwargs):
         super(StudentRegistrationForm, self).__init__(*args, **kwargs)
         self.fields['Firstname'].required = True
+        self.fields['Middlename'].required = True
         self.fields['Lastname'].required = True
         self.fields['Course'].required = True
         self.fields['Year'].required = True
@@ -74,7 +89,7 @@ class ChangePasswordForm(forms.Form):
 
         if new_password and confirm_password and new_password != confirm_password:
             self.add_error('confirm_password', "New password and confirm password do not match")
-        
+
         return cleaned_data
 
 class TimeLogForm(forms.ModelForm):

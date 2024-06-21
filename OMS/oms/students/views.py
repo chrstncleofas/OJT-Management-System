@@ -6,7 +6,7 @@ from django.utils.timezone import now
 from django.core.files.base import ContentFile 
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
-from students.models import TableStudents, TimeLog
+from students.models import Tablestudent, TimeLog
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -24,7 +24,7 @@ def studentDashboard(request) -> HttpResponse:
 @login_required
 def welcomeDashboard(request) -> HttpResponse:
     user = request.user
-    student = get_object_or_404(TableStudents, user=user)
+    student = get_object_or_404(Tablestudent, user=user)
     firstName = student.Firstname
     lastName = student.Lastname
     return render(
@@ -38,7 +38,7 @@ def welcomeDashboard(request) -> HttpResponse:
 
 def mainPageForDashboard(request) -> HttpResponse:
     user = request.user
-    student = get_object_or_404(TableStudents, user=user)
+    student = get_object_or_404(Tablestudent, user=user)
     firstName = student.Firstname
     lastName = student.Lastname
     email = student.Email
@@ -59,7 +59,7 @@ def mainPageForDashboard(request) -> HttpResponse:
 
 def TimeInAndTimeOut(request):
     user = request.user
-    student = get_object_or_404(TableStudents, user=user)
+    student = get_object_or_404(Tablestudent, user=user)
 
     if request.method == 'POST':
         form = TimeLogForm(request.POST, request.FILES)
@@ -96,7 +96,7 @@ def TimeInAndTimeOut(request):
 
 def studentProfile(request):
     user = request.user
-    student = get_object_or_404(TableStudents, user=user)
+    student = get_object_or_404(Tablestudent, user=user)
     
     if request.method == 'POST':
         firstName = request.POST.get('Firstname')
@@ -129,7 +129,7 @@ def studentProfile(request):
 
 def changePassword(request):
     user = request.user
-    student = get_object_or_404(TableStudents, user=user)
+    student = get_object_or_404(Tablestudent, user=user)
     firstName = student.Firstname
     lastName = student.Lastname
     if request.method == 'POST':
@@ -176,6 +176,13 @@ def studentRegister(request):
             student.save()
             messages.success(request, 'Registration successful. Waiting for admin approval.')
             return redirect('students:success')
+        else:
+            for field, errors in user_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+            for field, errors in student_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
     else:
         user_form = UserForm()
         student_form = StudentRegistrationForm()
@@ -189,7 +196,7 @@ def studentLogin(request):
         user = authenticate(request, username=username, password=password)
         if user:
             try:
-                student = TableStudents.objects.get(user=user)
+                student = Tablestudent.objects.get(user=user)
                 if not student.is_approved:
                     messages.warning(request, 'Your account is not approved yet. Please wait for admin approval.')
                     return render(request, 'students/login.html')
@@ -199,7 +206,7 @@ def studentLogin(request):
                         return redirect('students:studentPage')
                     else:
                         messages.error(request, 'Your account is disabled.')
-            except TableStudents.DoesNotExist:
+            except Tablestudent.DoesNotExist:
                 messages.error(request, 'Invalid username or password.')
         else:
             messages.error(request, 'Invalid username or password.')

@@ -7,11 +7,10 @@ if os.path.exists('.env'):
     from dotenv import load_dotenv
     load_dotenv()
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-
 # Security settings
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-1q^_u(40*=ydaz*%lz0v&2rt0-b0(b$q)-_=!u#d9!5&1n0zyo')
 DEBUG = config('DEBUG', default=False, cast=bool)
+# DEBUG = True
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=Csv())
 
 # Application definition
@@ -66,27 +65,27 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend_side.wsgi.application'
 
 # Database configuration
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': config('SQL_DATABASE'),
-#         'USER': config('SQL_USER'),
-#         'PASSWORD': config('SQL_PASSWORD'),
-#         'HOST': config('SQL_HOST'),
-#         'PORT': config('SQL_PORT', cast=int),
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('POSTGRES_DB'),
-        'USER': config('POSTGRES_USER'),
-        'PASSWORD': config('POSTGRES_PASSWORD'),
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': config('SQL_DATABASE'),
+        'USER': config('SQL_USER'),
+        'PASSWORD': config('SQL_PASSWORD'),
+        'HOST': config('SQL_HOST'),
+        'PORT': config('SQL_PORT', cast=int),
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': config('POSTGRES_DB'),
+#         'USER': config('POSTGRES_USER'),
+#         'PASSWORD': config('POSTGRES_PASSWORD'),
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -105,10 +104,28 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-# Static and media files
+# -----------------------------------------
+
+# For Docker and Online Deployment 
+# - Static and media files - #
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATIC_URL = '/static/'
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media/'
+
+# --------------------------------------- 
+
+# - For local purpose - #
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# STATIC_URL = '/static/'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

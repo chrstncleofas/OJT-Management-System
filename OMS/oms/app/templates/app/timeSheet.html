@@ -123,95 +123,41 @@
                 </div>
             </nav>
             <div class="container-fluid">
-                <h2 class="mt-4">View Student Time Logs</h2>
-                <form method="POST">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="studentSelect">Select Student:</label>
-                        <select id="studentSelect" name="student_id" class="form-control">
-                            <option value="" disabled selected>Select a student</option>
+                <h2 class="mt-4">Student Logs</h2>
+                <div class="table-responsive">
+                    <table class="table table-bordered mt-3">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Student #</th>
+                                <th>First Name</th>
+                                <th>Middlename</th>
+                                <th>Last Name</th>
+                                <th>Course</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                             {% for student in students %}
-                            <option value="{{ student.id }}">{{ student.Firstname }} {{ student.Lastname }}</option>
+                            <tr>
+                                <td>{{ student.StudentID }}</td>
+                                <td>{{ student.Firstname }}</td>
+                                <td>{{ student.Middlename }}</td>
+                                <td>{{ student.Lastname }}</td>
+                                <td>{{ student.Course }}</td>
+                                <td>
+                                    <a href="{% url 'viewTimeLogs' student.id %}" class="btn btn-primary"><i class="fas fa-eye"></i> </a>
+                                </td>
+                            </tr>
                             {% endfor %}
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">View Logs</button>
-                </form>
-                {% if selected_student %}
-                <h3 class="mt-5">Time Logs for {{ selected_student.Firstname }} {{ selected_student.Lastname }}</h3>
-                {% if time_logs %}
-                <table class="table table-bordered mt-3">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>#</th>
-                            <th>Action</th>
-                            <th>Timestamp</th>
-                            <th>Image</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for log in time_logs %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ log.action }}</td>
-                            <td>{{ log.timestamp }}</td>
-                            <td>
-                                {% if log.image %}
-                                <img src="{{ log.image.url }}" alt="Time {{ log.action }} Image" class="img-fluid" style="width: 100px; height: 100px;">
-                                {% else %}
-                                No Image
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% else %}
-                <p>No logs found for this student.</p>
-                {% endif %}
-                {% endif %}
-                <div class="mt-4">
-                    {% if total_hours %}
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="card text-white bg-primary mb-3">
-                                <div class="card-header">Total Work Hours</div>
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ total_hours }} hours</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card text-white bg-success mb-3">
-                                <div class="card-header">Required Duration</div>
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ required_hours }} hours</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card text-white bg-warning mb-3">
-                                <div class="card-header">Remaining Hours</div>
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ remaining_hours }} hours</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
+                        </tbody>
+                    </table>
                 </div>
-            </div>            
+            </div>
         </div>
     </div>
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-        $(".navbar-toggler").click(function (e) {
-            e.preventDefault();
-            $("#wrapper").toggleClass("toggled");
-        });
-    </script>
 </body>
 </html>
