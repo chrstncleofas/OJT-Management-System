@@ -1,15 +1,10 @@
 from datetime import timedelta
 from typing import Union
-from django.db.models import Q
-from django.http import Http404
 from django.urls import reverse
 from django.contrib.auth.decorators import user_passes_test
-from django.conf import settings
 from app.models import CustomUser
 from app.forms import EditProfileForm
-from django.db.models import Sum
 from django.contrib import messages
-from django.http import JsonResponse
 from students.models import Tablestudent, TimeLog
 from django.core.mail import send_mail
 from app.forms import CustomUserCreationForm
