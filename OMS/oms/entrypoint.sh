@@ -13,8 +13,8 @@ fi
 # Apply database makemigrations
 python manage.py makemigrations students
 
-# 
-python manage.py migrate --run-syncdb
+# # Apply
+# python manage.py migrate --run-syncdb
 
 # Apply database migrations
 python manage.py migrate students

@@ -1,15 +1,16 @@
 from django.db import models
 from app.models import CustomUser
 
-class Tablestudent(models.Model):
+class Tablestudents(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     StudentID = models.CharField(max_length=10, unique=True)
     Firstname = models.CharField(max_length=100)
     Middlename = models.CharField(max_length=100)
     Lastname = models.CharField(max_length=100)   
+    Prefix = models.CharField(max_length=100, blank=True, null=True)  
     Email = models.EmailField(unique=True)
     Course = models.CharField(max_length=100)
-    Year = models.IntegerField()
+    Year = models.CharField(max_length=50)
     Username = models.CharField(max_length=100, unique=True)
     Password = models.CharField(max_length=100)
     is_approved = models.BooleanField(default=False)
@@ -18,7 +19,7 @@ class Tablestudent(models.Model):
         return f"{self.Firstname} {self.Lastname}"
 
 class TimeLog(models.Model):
-    student = models.ForeignKey(Tablestudent, on_delete=models.CASCADE)
+    student = models.ForeignKey(Tablestudents, on_delete=models.CASCADE)
     action = models.CharField(max_length=10, choices=[('IN', 'Time In'), ('OUT', 'Time Out')])
     timestamp = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to='time_logs/', blank=True, null=True)

@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import user_passes_test
 from app.models import CustomUser
 from app.forms import EditProfileForm
 from django.contrib import messages
-from students.models import Tablestudent, TimeLog
+from students.models import Tablestudents, TimeLog
 from django.core.mail import send_mail
 from app.forms import CustomUserCreationForm
 from .forms import CustomPasswordChangeForm
@@ -19,6 +19,7 @@ HOME_URL_PATH = 'app/base.html'
 DASHBOARD = 'app/dashboard.html'
 MAIN_DASHBOARD = 'app/main-dashboard.html'
 PENDING_APPLICATION = 'app/pending.html'
+MANAGEMENT_STUDENT = 'app/manage-student.html'
 PROFILE = 'app/profile.html'
 CHANGE_PASSWORD = 'app/changePassword.html'
 
@@ -35,10 +36,10 @@ def mainDashboard(request):
     firstName = admin.first_name
     lastName = admin.last_name
     # 
-    pending_students = Tablestudent.objects.filter(is_approved=False)
+    pending_students = Tablestudents.objects.filter(is_approved=False)
     pending_count = pending_students.count()
     # 
-    approve = Tablestudent.objects.filter(is_approved=True)
+    approve = Tablestudents.objects.filter(is_approved=True)
     approve_count = approve.count()
     return render(
         request,
@@ -99,11 +100,38 @@ def getAllPendingRegister(request):
     firstName = admin.first_name
     lastName = admin.last_name
     # 
-    students = Tablestudent.objects.filter(is_approved=False)
+    students = Tablestudents.objects.filter(is_approved=False)
     return render(request, PENDING_APPLICATION, {
         'getAllPendingRegister': students,
         'firstName': firstName,
         'lastName': lastName
+    })
+
+def studentManagement(request):
+    user = request.user
+    admin = get_object_or_404(CustomUser, id=user.id)
+    # 
+    firstName = admin.first_name
+    lastName = admin.last_name
+    # 
+    approved = Tablestudents.objects.filter(is_approved=True)
+    pending = Tablestudents.objects.filter(is_approved=False)
+    # 
+    return render(
+        request,
+        MANAGEMENT_STUDENT,
+        {
+            'getListOfApproveStudent': approved,
+            'getAllPendingRegister': pending,
+            'firstName': firstName,
+            'lastName': lastName
+        }
+    )
+
+def getListOfApproveStudent(request):
+    students = Tablestudents.objects.filter(is_approved=True)
+    return render(request, MANAGEMENT_STUDENT, {
+        'getListOfApproveStudent': students,
     })
 
 def pendingApplication(request):
@@ -145,7 +173,7 @@ def register(request):
     return render(request, 'app/register.html', {'form': form})
 
 def approve_student(request, id):
-    student = Tablestudent.objects.get(id=id)
+    student = Tablestudents.objects.get(id=id)
     student.is_approved = True
     student.save()
     messages.success(request, f'{student.Firstname} {student.Lastname} has been approved.')
@@ -162,7 +190,7 @@ def is_admin(user):
 
 @user_passes_test(is_admin)
 def timeSheet(request):
-    students = Tablestudent.objects.all()
+    students = Tablestudents.objects.all()
     selected_student = None
     time_logs = []
     total_hours = 0
@@ -175,7 +203,7 @@ def timeSheet(request):
 
     if request.method == 'POST':
         student_id = request.POST.get('student_id')
-        selected_student = get_object_or_404(Tablestudent, id=student_id)
+        selected_student = get_object_or_404(Tablestudents, id=student_id)
         time_logs = TimeLog.objects.filter(student=selected_student).order_by('timestamp')
 
         total_work_seconds = 0
@@ -213,14 +241,14 @@ def timeSheet(request):
     )
 
 def viewTimeLogs(request, student_id):
-    student = get_object_or_404(Tablestudent, id=student_id)
+    student = get_object_or_404(Tablestudents, id=student_id)
     firstName = student.Firstname
     lastName = student.Lastname
     time_logs = []
     total_hours = 0
     required_hours = 600
 
-    selected_student = get_object_or_404(Tablestudent, id=student_id)
+    selected_student = get_object_or_404(Tablestudents, id=student_id)
     time_logs = TimeLog.objects.filter(student=selected_student).order_by('timestamp')
 
     total_work_seconds = 0

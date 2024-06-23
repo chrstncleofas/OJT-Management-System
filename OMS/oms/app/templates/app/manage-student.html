@@ -7,47 +7,44 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main-dashboard.css' %}">
     <title>Admin - OJT Management System Dashboard</title>
     <style>
-        #wrapper {
+        .upload-box {
+            border: 2px dashed #ccc;
+            border-radius: 6px;
             display: flex;
-            width: 100%;
-            align-items: stretch;
-        }
-        #sidebar-wrapper {
-            min-width: 250px;
-            max-width: 250px;
+            align-items: center;
+            justify-content: center;
+            height: 216px;
+            margin-bottom: 20px;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
             background-color: #f8f9fa;
-            border-right: 1px solid #dee2e6;
         }
-        #page-content-wrapper {
+        .upload-box input[type="file"] {
+            position: absolute;
             width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
         }
-        .sidebar-heading {
-            padding: 1rem;
-            font-size: 1.2rem;
-            text-align: center;
+        .upload-box img {
+            max-width: 100%;
+            max-height: 100%;
+            display: none;
         }
-        .list-group-item {
-            padding: 1rem;
-        }
-        .navbar {
-            margin-bottom: 0;
-        }
-        @media (max-width: 768px) {
-            #sidebar-wrapper {
-                display: none;
-            }
-            #wrapper.toggled #sidebar-wrapper {
-                display: block;
-                position: absolute;
-                z-index: 1000;
-                width: 100%;
-            }
-            .navbar-toggler {
-                display: block;
-            }
+        .upload-box::before {
+            content: 'Choose File';
+            color: #888;
+            font-size: 16px;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
@@ -55,7 +52,7 @@
     <div class="d-flex" id="wrapper">
         <!-- Sidebar -->
         <div class="bg-light border-right" id="sidebar-wrapper">
-            <div class="sidebar-heading">OJT Management System</div>
+            <a href="{% url 'dashboard' %}" style="text-decoration: none !important; color: black !important;"><div class="sidebar-heading">OJT Management System</div></a>
             <div class="list-group list-group-flush">
                 <a href="{% url 'mainDashboard' %}" class="list-group-item list-group-item-action bg-light">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
@@ -63,11 +60,11 @@
                 <a href="#" class="list-group-item list-group-item-action bg-light">
                     <i class="fas fa-bullhorn"></i> Announcement
                 </a>
-                <a href="{% url 'manageStudent' %}" class="list-group-item list-group-item-action bg-light">
+                <!-- <a href="{% url 'getAllPendingRegister' %}" class="list-group-item list-group-item-action bg-light">
+                    <i class="fas fa-hourglass-half icon"></i> Pending Registration
+                </a> -->
+                <a href="{% url 'studentManagement' %}" class="list-group-item list-group-item-action bg-light">
                     <i class="fas fa-user-graduate"></i> Manage Student
-                </a>
-                <a href="#" class="list-group-item list-group-item-action bg-light">
-                    <i class="fas fa-file-alt"></i> Application
                 </a>
                 <a href="#" class="list-group-item list-group-item-action bg-light">
                     <i class="fas fa-chart-line"></i> Reports
@@ -86,7 +83,6 @@
                 </a>
             </div>
         </div>
-        <!-- /#sidebar-wrapper -->
         <!-- Page Content -->
         <div id="page-content-wrapper">
             <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
@@ -101,9 +97,9 @@
                                 <i class="fas fa-user mr-2"></i>{{ firstName }} {{ lastName }}
                             </a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="#">Profile</a>
+                                <a class="dropdown-item" href="{% url 'profile' %}">Profile</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">Change Password</a>
+                                <a class="dropdown-item" href="{% url 'changePass' %}">Change Password</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
                             </div>
@@ -111,43 +107,89 @@
                     </ul>
                 </div>
             </nav>
-
             <div class="container-fluid">
-                <h1 class="mt-4">Pending Student Registrations</h1>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Student ID</th>
-                            <th>Firstname</th>
-                            <th>Lastname</th>
-                            <th>Course</th>
-                            <th>Year</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for student in getAllPendingRegister %}
-                        <tr>
-                            <td>{{ student.StudentID }}</td>
-                            <td>{{ student.Firstname }}</td>
-                            <td>{{ student.Lastname }}</td>
-                            <td>{{ student.Course }}</td>
-                            <td>{{ student.Year }}</td>
-                            <td>
-                                <a href="{% url 'approve_student' student.id %}" class="btn btn-primary">Approve</a>
-                                <a href="#" class="btn btn-danger">Reject</a>
-                                <!-- Add button for rejecting student if necessary -->
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <h5 class="mt-3 mb-3">Student Management</h5>
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="approved-students-tab" data-toggle="tab" href="#approved-students" role="tab" aria-controls="approved-students" aria-selected="true">Approved Students</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="pending-application-tab" data-toggle="tab" href="#pending-application" role="tab" aria-controls="pending-application" aria-selected="false">Pending Application</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="approved-students" role="tabpanel" aria-labelledby="approved-students-tab">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Firstname</th>
+                                    <th>Middlename</th>
+                                    <th>Lastname</th>
+                                    <th>Course</th>
+                                    <th>Year</th>
+                                    <th>Status</th>
+                                    <th>Edit</th>
+                                    <th>Archive</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student in getListOfApproveStudent %}
+                                <tr>
+                                    <td>{{ student.StudentID }}</td>
+                                    <td>{{ student.Firstname }}</td>
+                                    <td>{{ student.Middlename }}</td>
+                                    <td>{{ student.Lastname }}</td>
+                                    <td>{{ student.Course }}</td>
+                                    <td>{{ student.Year }}</td>
+                                    <td>
+                                       <p class="text-primary">Approved</p>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'approve_student' student.id %}" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i></a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'approve_student' student.id %}" class="btn btn-primary"><i class="fa-solid fa-file"></i></a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="tab-pane fade" id="pending-application" role="tabpanel" aria-labelledby="pending-application-tab">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Firstname</th>
+                                    <th>Middlename</th>
+                                    <th>Lastname</th>
+                                    <th>Course</th>
+                                    <th>Year</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student in getAllPendingRegister %}
+                                <tr>
+                                    <td>{{ student.StudentID }}</td>
+                                    <td>{{ student.Firstname }}</td>
+                                    <td>{{ student.Middlename }}</td>
+                                    <td>{{ student.Lastname }}</td>
+                                    <td>{{ student.Course }}</td>
+                                    <td>{{ student.Year }}</td>
+                                    <td>
+                                        <a href="{% url 'approve_student' student.id %}" class="btn btn-primary">Approve</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-        <!-- /#page-content-wrapper -->
     </div>
-    <!-- /#wrapper -->
-
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
@@ -157,6 +199,26 @@
             e.preventDefault();
             $("#wrapper").toggleClass("toggled");
         });
+        document.getElementById('id_image').addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                document.getElementById('timeInBtn').disabled = false;
+                document.getElementById('timeOutBtn').disabled = false;
+            }
+        });
+        // 
+        function previewImage(event) {
+            var preview = document.getElementById('preview');
+            var file = document.getElementById('id_image').files[0];
+            var reader = new FileReader();
+            reader.onload = function() {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+            }
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+        document.getElementById('id_image').addEventListener('change', previewImage);
     </script>
 </body>
 </html>

@@ -1,10 +1,26 @@
 from django import forms
 from app.models import CustomUser
-from students.models import Tablestudent, TimeLog
+from students.models import Tablestudents, TimeLog
 
 COURSE_CHOICES = [
-    ('Computer Science', 'Computer Science'),
-    ('Information Technology', 'Information Technology'),
+    ('', '--- Select Course ---'),
+    ('BS Computer Science', 'BS Computer Science'),
+    ('BS Information Technology', 'BS Information Technology'),
+]
+
+PREFIX_CHOICES = [
+    ('', '--- Select Prefix ---'),
+    ('Jr', 'Jr'),
+    ('III', 'III'),
+    ('Senior', 'Senior'),
+]
+
+YEAR_CHOICES = [
+    ('', '--- Select Year ---'),
+    ('4th', '4th'),
+    ('3rd', '3rd'),
+    ('2nd', '2nd'),
+    ('1st', '1st'),
 ]
 
 class UserForm(forms.ModelForm):
@@ -53,14 +69,25 @@ class StudentRegistrationForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-control'})
     )
 
+    Prefix = forms.ChoiceField(
+        choices=PREFIX_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=False
+    )
+
+    Year = forms.ChoiceField(
+        choices=YEAR_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=False
+    )
+
     class Meta:
-        model = Tablestudent
-        fields = ['StudentID', 'Firstname', 'Middlename', 'Lastname', 'Course', 'Year']
+        model = Tablestudents
+        fields = ['StudentID', 'Firstname', 'Middlename', 'Lastname', 'Prefix', 'Course', 'Year']
         widgets = {
             'Firstname': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter first name'}),
             'Middlename': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter middle name'}),
             'Lastname': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter last name'}),
-            'Year': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter year'}),
         }
 
     def __init__(self, *args, **kwargs):

@@ -64,7 +64,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend_side.wsgi.application'
 
-# Database configuration
+# -- Docker Database configuration -- #
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -76,6 +76,7 @@ DATABASES = {
     }
 }
 
+# --- Local Configuration Database ------ #
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
@@ -107,7 +108,7 @@ USE_TZ = True
 # -----------------------------------------
 
 # For Docker and Online Deployment 
-# - Static and media files - #
+# -- Static and media files -- #
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -119,7 +120,7 @@ MEDIA_ROOT = BASE_DIR / 'media/'
 
 # --------------------------------------- 
 
-# - For local purpose - #
+# -- For local purpose -- #
 # BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # STATIC_URL = '/static/'
