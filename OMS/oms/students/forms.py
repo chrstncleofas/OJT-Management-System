@@ -61,7 +61,7 @@ class StudentRegistrationForm(forms.ModelForm):
     StudentID = forms.CharField(
         max_length=10, 
         label='Student ID',
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Student ID'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex. 18-0000'})
     )
 
     Course = forms.ChoiceField(
@@ -83,11 +83,12 @@ class StudentRegistrationForm(forms.ModelForm):
 
     class Meta:
         model = Tablestudents
-        fields = ['StudentID', 'Firstname', 'Middlename', 'Lastname', 'Prefix', 'Course', 'Year']
+        fields = ['StudentID', 'Firstname', 'Middlename', 'Lastname', 'Prefix', 'Number' ,'Course', 'Year']
         widgets = {
-            'Firstname': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter first name'}),
-            'Middlename': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter middle name'}),
-            'Lastname': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter last name'}),
+            'Firstname': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter First Name'}),
+            'Middlename': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Middle Name'}),
+            'Lastname': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Last Name'}),
+            'Number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex. 09610090120'}),
         }
 
     def __init__(self, *args, **kwargs):

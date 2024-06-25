@@ -40,7 +40,13 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Success</h5>
-                        <p class="card-text">{{ message }}</p>
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-primary" role="alert">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
                         <a href="{% url 'students:dashboard' %}" class="btn btn-primary">Go to Dashboard</a>
                     </div>
                 </div>

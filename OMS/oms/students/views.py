@@ -197,8 +197,11 @@ def studentLogin(request):
         if user:
             try:
                 student = Tablestudents.objects.get(user=user)
-                if not student.is_approved:
+                if student.status == 'pending':
                     messages.warning(request, 'Your account is not approved yet. Please wait for admin approval.')
+                    return render(request, 'students/login.html')
+                elif student.status == 'rejected':
+                    messages.error(request, 'Your account has been rejected. Please contact the admin for further details.')
                     return render(request, 'students/login.html')
                 else:
                     if user.is_active:

@@ -60,9 +60,6 @@
                 <a href="#" class="list-group-item list-group-item-action bg-light">
                     <i class="fas fa-bullhorn"></i> Announcement
                 </a>
-                <!-- <a href="{% url 'getAllPendingRegister' %}" class="list-group-item list-group-item-action bg-light">
-                    <i class="fas fa-hourglass-half icon"></i> Pending Registration
-                </a> -->
                 <a href="{% url 'studentManagement' %}" class="list-group-item list-group-item-action bg-light">
                     <i class="fas fa-user-graduate"></i> Manage Student
                 </a>
@@ -116,6 +113,9 @@
                     <li class="nav-item">
                         <a class="nav-link" id="pending-application-tab" data-toggle="tab" href="#pending-application" role="tab" aria-controls="pending-application" aria-selected="false">Pending Application</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="rejected-application-tab" data-toggle="tab" href="#rejected-application" role="tab" aria-controls="rejected-application" aria-selected="false">Rejected Application</a>
+                    </li>
                 </ul>
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="approved-students" role="tabpanel" aria-labelledby="approved-students-tab">
@@ -129,6 +129,7 @@
                                     <th>Course</th>
                                     <th>Year</th>
                                     <th>Status</th>
+                                    <th>Info</th>
                                     <th>Edit</th>
                                     <th>Archive</th>
                                 </tr>
@@ -144,6 +145,34 @@
                                     <td>{{ student.Year }}</td>
                                     <td>
                                        <p class="text-primary">Approved</p>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-primary me-1" href="{% url 'viewStudentInformation' student.id %}" data-bs-toggle="modal" data-bs-target="#myModal{{student.id}}">
+                                            <i class="fa-solid fa-circle-info fa-lg"></i>
+                                        </button>
+                                        <div class="modal" id="myModal{{student.id}}" tabindex="-1" aria-labelledby="myModalLabel1" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Student Details</h5>
+                                                    <span aria-hidden="true"></span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <ul class="list-unstyled">
+                                                        <li>Student ID : <strong>{{ student.StudentID }}</strong></li>
+                                                        <li>Fullname : <strong>{{ student.Firstname }} {{ student.Middlename }} {{ student.Lastname }}</strong></li>
+                                                        <li>Year & Course : <strong>{{ student.Year }} - {{ student.Course }}</strong></li>
+                                                        <li>Email : <strong>{{ student.Email }}</strong></li>
+                                                        <li>Mobile No. : <strong>{{ student.Number }}</strong></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td>
                                         <a href="{% url 'approve_student' student.id %}" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i></a>
@@ -180,6 +209,37 @@
                                     <td>{{ student.Year }}</td>
                                     <td>
                                         <a href="{% url 'approve_student' student.id %}" class="btn btn-primary">Approve</a>
+                                        <a href="{% url 'reject_students' student.id %}" class="btn btn-danger">Disapprove</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="tab-pane fade" id="rejected-application" role="tabpanel" aria-labelledby="rejected-application-tab">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Firstname</th>
+                                    <th>Middlename</th>
+                                    <th>Lastname</th>
+                                    <th>Course</th>
+                                    <th>Year</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student in getAllRejectedApplication %}
+                                <tr>
+                                    <td>{{ student.StudentID }}</td>
+                                    <td>{{ student.Firstname }}</td>
+                                    <td>{{ student.Middlename }}</td>
+                                    <td>{{ student.Lastname }}</td>
+                                    <td>{{ student.Course }}</td>
+                                    <td>{{ student.Year }}</td>
+                                    <td>
+                                        <p class="text-danger">Disapproved</p>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -194,6 +254,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         $(".navbar-toggler").click(function(e) {
             e.preventDefault();

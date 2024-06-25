@@ -18,7 +18,6 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanen
 HOME_URL_PATH = 'app/base.html'
 DASHBOARD = 'app/dashboard.html'
 MAIN_DASHBOARD = 'app/main-dashboard.html'
-PENDING_APPLICATION = 'app/pending.html'
 MANAGEMENT_STUDENT = 'app/manage-student.html'
 PROFILE = 'app/profile.html'
 CHANGE_PASSWORD = 'app/changePassword.html'
@@ -32,21 +31,25 @@ def dashboard(request) -> HttpResponse:
 def mainDashboard(request):
     user = request.user
     admin = get_object_or_404(CustomUser, id=user.id)
-    admin = get_object_or_404(CustomUser, id=user.id)
     firstName = admin.first_name
     lastName = admin.last_name
-    # 
-    pending_students = Tablestudents.objects.filter(is_approved=False)
-    pending_count = pending_students.count()
-    # 
-    approve = Tablestudents.objects.filter(is_approved=True)
+    # Approve
+    approve = Tablestudents.objects.filter(status='approved')
     approve_count = approve.count()
+    # Pending
+    pending = Tablestudents.objects.filter(status='pending')
+    pending_count = pending.count()
+    # Rejected
+    reject = Tablestudents.objects.filter(status='rejected')
+    reject_count = reject.count()
+
     return render(
         request,
         MAIN_DASHBOARD,
         {
             'approve_count': approve_count,
             'pending_count': pending_count,
+            'reject_count': reject_count,
             'firstName': firstName,
             'lastName': lastName
         }
@@ -101,7 +104,7 @@ def getAllPendingRegister(request):
     lastName = admin.last_name
     # 
     students = Tablestudents.objects.filter(is_approved=False)
-    return render(request, PENDING_APPLICATION, {
+    return render(request, MANAGEMENT_STUDENT, {
         'getAllPendingRegister': students,
         'firstName': firstName,
         'lastName': lastName
@@ -114,8 +117,9 @@ def studentManagement(request):
     firstName = admin.first_name
     lastName = admin.last_name
     # 
-    approved = Tablestudents.objects.filter(is_approved=True)
-    pending = Tablestudents.objects.filter(is_approved=False)
+    approved = Tablestudents.objects.filter(status='approved')
+    pending = Tablestudents.objects.filter(status='pending')
+    rejected = Tablestudents.objects.filter(status='rejected')
     # 
     return render(
         request,
@@ -123,6 +127,7 @@ def studentManagement(request):
         {
             'getListOfApproveStudent': approved,
             'getAllPendingRegister': pending,
+            'getAllRejectedApplication': rejected,
             'firstName': firstName,
             'lastName': lastName
         }
@@ -133,9 +138,6 @@ def getListOfApproveStudent(request):
     return render(request, MANAGEMENT_STUDENT, {
         'getListOfApproveStudent': students,
     })
-
-def pendingApplication(request):
-    return render(request, PENDING_APPLICATION)
 
 def user_login(request):
     if request.method == 'POST':
@@ -174,10 +176,17 @@ def register(request):
 
 def approve_student(request, id):
     student = Tablestudents.objects.get(id=id)
-    student.is_approved = True
+    student.status = 'approved'
     student.save()
     messages.success(request, f'{student.Firstname} {student.Lastname} has been approved.')
-    return redirect(reverse('pendingApplication'))
+    return redirect(reverse('studentManagement'))
+
+def reject_students(request, id):
+    student = Tablestudents.objects.get(id=id)
+    student.status = 'rejected'
+    student.save()
+    messages.success(request, f'{student.Firstname} {student.Lastname} has been rejected.')
+    return redirect(reverse('studentManagement'))
 
 def logoutView(request) -> HttpResponseRedirect:
     logout(request)
@@ -280,3 +289,8 @@ def viewTimeLogs(request, student_id):
     }
 
     return render(request, 'app/viewTimeLogs.html', context)
+
+def viewStudentInformation(request, id) -> HttpResponseRedirect:
+    if request.method == 'GET':
+        Tablestudents.objects.get(pk=id)
+    return HttpResponseRedirect(reverse(getListOfApproveStudent))
