@@ -2,7 +2,6 @@ from app import views
 from django.urls import path
 from django.conf.urls import url
 from django.conf import settings
-# from .views import LoginView, LogoutView
 from django.conf.urls.static import static
 
 urlpatterns = [
@@ -31,6 +30,7 @@ urlpatterns = [
     path('getAllPendingRegister', views.getAllPendingRegister, name='getAllPendingRegister'),
     path('getListOfApproveStudent', views.getListOfApproveStudent, name='getListOfApproveStudent'),
     path('getListOfArchivedStudents', views.getListOfArchivedStudents, name='getListOfArchivedStudents'),
+    # 
     path('announcement', views.announcement, name='announcement'),
     path('listOfAnnouncement', views.listOfAnnouncement, name='listOfAnnouncement'),
 
