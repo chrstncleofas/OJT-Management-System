@@ -73,9 +73,6 @@
                 <a href="#" class="list-group-item list-group-item-action bg-light">
                     <i class="fas fa-bullhorn"></i> Announcement
                 </a>
-                <a href="{% url 'getAllPendingRegister' %}" class="list-group-item list-group-item-action bg-light">
-                    <i class="fas fa-hourglass-half icon"></i> Pending Registration
-                </a>
                 <a href="#" class="list-group-item list-group-item-action bg-light">
                     <i class="fas fa-user-graduate"></i> Manage Student
                 </a>
@@ -123,65 +120,7 @@
                 </div>
             </nav>
             <div class="container-fluid">
-                <h2 class="mt-4">Time Logs for {{ firstName }} {{ lastName }}</h2>
-                {% if time_logs %}
-                <table class="table table-bordered mt-3">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>#</th>
-                            <th>Action</th>
-                            <th>Timestamp</th>
-                            <th>Image</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for log in time_logs %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ log.action }}</td>
-                            <td>{{ log.timestamp }}</td>
-                            <td>
-                                {% if log.image %}
-                                <img src="{{ log.image.url }}" alt="Time {{ log.action }} Image" class="img-fluid" style="width: 100px; height: 100px;">
-                                {% else %}
-                                No Image
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <div class="mt-4">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="card text-white bg-primary mb-3">
-                                <div class="card-header">Total Work Hours</div>
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ total_hours }} hours</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card text-white bg-success mb-3">
-                                <div class="card-header">Required Duration</div>
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ required_hours }} hours</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card text-white bg-warning mb-3">
-                                <div class="card-header">Remaining Hours</div>
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ remaining_hours }} hours</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% else %}
-                <p>No logs found for this student.</p>
-                {% endif %}
+                
             </div>
         </div>
     </div>

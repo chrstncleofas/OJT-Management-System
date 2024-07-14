@@ -1,11 +1,16 @@
 from django.db import models
 from app.models import CustomUser
 
-class Tablestudents(models.Model):
+class Tablestudent(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('approved', 'Approved'),
         ('rejected', 'Rejected'),
+    ]
+    ARCHIVED_STATUS = [
+        ('notarchive', 'Notarchive'),
+        ('archive', 'Archive'),
+        ('unarchive', 'Unarchive'),
     ]
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     StudentID = models.CharField(max_length=10, unique=True)
@@ -21,11 +26,12 @@ class Tablestudents(models.Model):
     Username = models.CharField(max_length=100, unique=True)
     Password = models.CharField(max_length=100)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    archivedStudents = models.CharField(max_length=30, choices=ARCHIVED_STATUS, default='notarchive')
     def __str__(self):
         return f"{self.Firstname} {self.Lastname}"
 
 class TimeLog(models.Model):
-    student = models.ForeignKey(Tablestudents, on_delete=models.CASCADE)
+    student = models.ForeignKey(Tablestudent, on_delete=models.CASCADE)
     action = models.CharField(max_length=10, choices=[('IN', 'Time In'), ('OUT', 'Time Out')])
     timestamp = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to='time_logs/', blank=True, null=True)

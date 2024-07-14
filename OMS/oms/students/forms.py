@@ -1,6 +1,6 @@
 from django import forms
 from app.models import CustomUser
-from students.models import Tablestudents, TimeLog
+from students.models import Tablestudent, TimeLog
 
 COURSE_CHOICES = [
     ('', '--- Select Course ---'),
@@ -82,7 +82,7 @@ class StudentRegistrationForm(forms.ModelForm):
     )
 
     class Meta:
-        model = Tablestudents
+        model = Tablestudent
         fields = ['StudentID', 'Firstname', 'Middlename', 'Lastname', 'Prefix', 'Number' ,'Course', 'Year']
         widgets = {
             'Firstname': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter First Name'}),

@@ -22,9 +22,6 @@
                 <a href="{% url 'listOfAnnouncement' %}" class="list-group-item list-group-item-action bg-light">
                     <i class="fas fa-bullhorn"></i> Announcement
                 </a>
-                <!-- <a href="{% url 'getAllPendingRegister' %}" class="list-group-item list-group-item-action bg-light">
-                    <i class="fas fa-hourglass-half icon"></i> Pending Registration
-                </a> -->
                 <a href="{% url 'studentManagement' %}" class="list-group-item list-group-item-action bg-light">
                     <i class="fas fa-user-graduate"></i> Manage Student
                 </a>
@@ -52,6 +49,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
+
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
                         <li class="nav-item dropdown">
@@ -71,46 +69,27 @@
             </nav>
             <!-- Card -->
             <div class="container-fluid">
-                <h1 class="mt-4">Dashboard</h1>
-                <div class="row">
-                    <div class="col-lg-4">
-                        <div class="card text-white bg-success">
-                            <div class="card-body">
-                                <i class="fas fa-check-circle icon"></i>
-                                <div>
-                                    <div class="count">{{ approve_count }}</div>
-                                    <div>Approved</div>
-                                </div>
-                            </div>
-                        </div>
+                <h2 class="mt-4">Announcement</h2>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="Title">Title</label>
+                        {{ form.Title }}
                     </div>
-                    <div class="col-lg-4">
-                        <a href="{% url 'studentManagement' %}" style="text-decoration: none;">
-                            <div class="card text-white bg-warning">
-                                <div class="card-body">
-                                    <i class="fas fa-hourglass-half icon"></i>
-                                    <div>
-                                        <div class="count">{{ pending_count }}</div>
-                                        <div>Pending Registration</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
+                    <div class="form-group">
+                        <label for="Image">Image</label>
+                        {{ form.Image }}
                     </div>
-                    <div class="col-lg-4">
-                        <a href="{% url 'studentManagement' %}" style="text-decoration: none;">
-                            <div class="card text-white bg-danger">
-                                <div class="card-body">
-                                    <i class="fas fa-close icon"></i>
-                                    <div>
-                                        <div class="count">{{ reject_count }}</div>
-                                        <div>Disapprove Registration</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
+                    <div class="form-group">
+                        <label for="Description">Description</label>
+                        {{ form.Description }}
                     </div>
-                </div>
+                    <div class="form-group">
+                        <label for="Status">Status</label>
+                        {{ form.Status }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Announcement</button>
+                </form>
             </div>
         </div>
     </div>

@@ -116,6 +116,9 @@
                     <li class="nav-item">
                         <a class="nav-link" id="rejected-application-tab" data-toggle="tab" href="#rejected-application" role="tab" aria-controls="rejected-application" aria-selected="false">Rejected Application</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="archive-tab" data-toggle="tab" href="#archive" role="tab" aria-controls="archive" aria-selected="false">Archive Students</a>
+                    </li>
                 </ul>
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="approved-students" role="tabpanel" aria-labelledby="approved-students-tab">
@@ -129,9 +132,7 @@
                                     <th>Course</th>
                                     <th>Year</th>
                                     <th>Status</th>
-                                    <th>Info</th>
-                                    <th>Edit</th>
-                                    <th>Archive</th>
+                                    <th>View</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -147,38 +148,7 @@
                                        <p class="text-primary">Approved</p>
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-primary me-1" href="{% url 'viewStudentInformation' student.id %}" data-bs-toggle="modal" data-bs-target="#myModal{{student.id}}">
-                                            <i class="fa-solid fa-circle-info fa-lg"></i>
-                                        </button>
-                                        <div class="modal" id="myModal{{student.id}}" tabindex="-1" aria-labelledby="myModalLabel1" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">Student Details</h5>
-                                                    <span aria-hidden="true"></span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <ul class="list-unstyled">
-                                                        <li>Student ID : <strong>{{ student.StudentID }}</strong></li>
-                                                        <li>Fullname : <strong>{{ student.Firstname }} {{ student.Middlename }} {{ student.Lastname }}</strong></li>
-                                                        <li>Year & Course : <strong>{{ student.Year }} - {{ student.Course }}</strong></li>
-                                                        <li>Email : <strong>{{ student.Email }}</strong></li>
-                                                        <li>Mobile No. : <strong>{{ student.Number }}</strong></li>
-                                                    </ul>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-                                                </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <a href="{% url 'approve_student' student.id %}" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i></a>
-                                    </td>
-                                    <td>
-                                        <a href="{% url 'approve_student' student.id %}" class="btn btn-primary"><i class="fa-solid fa-file"></i></a>
+                                        <a href="{% url 'viewStudentInformation' student.id %}" class="btn btn-primary"><i class="fas fa-eye"></i></a>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -246,6 +216,40 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="tab-pane fade" id="archive" role="tabpanel" aria-labelledby="archive-tab">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Firstname</th>
+                                    <th>Middlename</th>
+                                    <th>Lastname</th>
+                                    <th>Course</th>
+                                    <th>Year</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student in getListOfArchivedStudents %}
+                                <tr>
+                                    <td>{{ student.StudentID }}</td>
+                                    <td>{{ student.Firstname }}</td>
+                                    <td>{{ student.Middlename }}</td>
+                                    <td>{{ student.Lastname }}</td>
+                                    <td>{{ student.Course }}</td>
+                                    <td>{{ student.Year }}</td>
+                                    <td>
+                                        <p class="text-danger">Archive</p>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'unArchivedStudent' student.id %}" class="btn btn-primary">Unarchive</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -280,6 +284,14 @@
             }
         }
         document.getElementById('id_image').addEventListener('change', previewImage);
+
+        $(document).ready(function() {
+            $(".archiveBtn").on("click", function() {
+                var studentId = $(this).data("student-id");
+                $("#studentId").val(studentId);
+                $("#archiveModal").modal("show");
+            });
+        });
     </script>
 </body>
 </html>

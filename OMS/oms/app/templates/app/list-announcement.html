@@ -7,64 +7,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main-dashboard.css' %}">
     <title>Admin - OJT Management System Dashboard</title>
-    <style>
-        #wrapper {
-            display: flex;
-            width: 100%;
-            align-items: stretch;
-        }
-        #sidebar-wrapper {
-            min-width: 250px;
-            max-width: 250px;
-            background-color: #f8f9fa;
-            border-right: 1px solid #dee2e6;
-        }
-        #page-content-wrapper {
-            width: 100%;
-        }
-        .sidebar-heading {
-            padding: 1rem;
-            font-size: 1.2rem;
-            text-align: center;
-        }
-        .list-group-item {
-            padding: 1rem;
-        }
-        .navbar {
-            margin-bottom: 0;
-        }
-        @media (max-width: 768px) {
-            #sidebar-wrapper {
-                display: none;
-            }
-            #wrapper.toggled #sidebar-wrapper {
-                display: block;
-                position: absolute;
-                z-index: 1000;
-                width: 100%;
-            }
-            .navbar-toggler {
-                display: block;
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="d-flex" id="wrapper">
         <!-- Sidebar -->
         <div class="bg-light border-right" id="sidebar-wrapper">
-            <div class="sidebar-heading">OJT Management System</div>
+            <a href="{% url 'dashboard' %}" style="text-decoration: none !important; color: black !important;"><div class="sidebar-heading">OJT Management System</div></a>
             <div class="list-group list-group-flush">
                 <a href="{% url 'mainDashboard' %}" class="list-group-item list-group-item-action bg-light">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
                 </a>
-                <a href="#" class="list-group-item list-group-item-action bg-light">
+                <a href="{% url 'listOfAnnouncement' %}" class="list-group-item list-group-item-action bg-light">
                     <i class="fas fa-bullhorn"></i> Announcement
-                </a>
-                <a href="{% url 'getAllPendingRegister' %}" class="list-group-item list-group-item-action bg-light">
-                    <i class="fas fa-hourglass-half icon"></i> Pending Registration
                 </a>
                 <a href="{% url 'studentManagement' %}" class="list-group-item list-group-item-action bg-light">
                     <i class="fas fa-user-graduate"></i> Manage Student
@@ -86,14 +42,13 @@
                 </a>
             </div>
         </div>
-        <!-- /#sidebar-wrapper -->
-
         <!-- Page Content -->
         <div id="page-content-wrapper">
             <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
@@ -112,31 +67,36 @@
                     </ul>
                 </div>
             </nav>
+            <!-- Card -->
             <div class="container-fluid">
-                <h4 class="mt-4">Pending Register</h4>
+                <h2 class="mt-4">Announcement</h2>
+                <div class="d-flex justify-content-end mb-2">
+                    <a href="{% url 'announcement' %}" class="btn btn-success">Add Announcement</a>
+                </div>
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Student ID</th>
-                            <th>Firstname</th>
-                            <th>Middlename</th>
-                            <th>Lastname</th>
-                            <th>Course</th>
-                            <th>Year</th>
+                            <th>Title</th>
+                            <th>Image</th>
+                            <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for student in getAllPendingRegister %}
+                        {% for announcement in listOfAnnouncement %}
                         <tr>
-                            <td>{{ student.StudentID }}</td>
-                            <td>{{ student.Firstname }}</td>
-                            <td>{{ student.Middlename }}</td>
-                            <td>{{ student.Lastname }}</td>
-                            <td>{{ student.Course }}</td>
-                            <td>{{ student.Year }}</td>
+                            <td>{{ announcement.Title }}</td>
                             <td>
-                                <a href="{% url 'approve_student' student.id %}" class="btn btn-primary">Approve</a>
+                                {% if announcement.Image %}
+                                    <img src="{{ announcement.Image.url }}" alt="{{ announcement.Title }}" style="max-width: 100px;">
+                                {% else %}
+                                    No Image
+                                {% endif %}
+                            </td>
+                            <td style="text-transform: capitalize;">{{ announcement.Status }}</td>
+                            <td>
+                                <a href="" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i></a>
+                                <a href="" class="btn btn-danger"><i class="fa-solid fa-trash"></i></a>
                             </td>
                         </tr>
                         {% endfor %}

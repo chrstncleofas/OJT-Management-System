@@ -1,7 +1,13 @@
 from django import forms
+from .models import AnnouncementTable
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import PasswordChangeForm
+
+STATUS = [
+    ('enable', 'Enable'),
+    ('disable', 'Disable'),
+]
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
@@ -27,3 +33,23 @@ class CustomPasswordChangeForm(PasswordChangeForm):
 
     class Meta:
         fields = ['old_password', 'new_password1', 'new_password2']
+
+class AnnouncementForm(forms.ModelForm):
+
+    Status = forms.ChoiceField(
+        choices=STATUS,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    class Meta:
+        model = AnnouncementTable
+        fields = ['Title', 'Image', 'Description', 'Status']
+        widgets = {
+            'Title': forms.TextInput(attrs={'class': 'form-control'}),
+            'Description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+        def __init__(self, *args, **kwargs):
+            super(AnnouncementForm, self).__init__(*args, **kwargs)
+            self.fields['Title'].required = True
+            self.fields['Description'].required = True
