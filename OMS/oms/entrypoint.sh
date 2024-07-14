@@ -11,13 +11,13 @@ if [ "$DATABASE" = "postgres" ]; then
 fi
 
 # Apply database makemigrations
-python manage.py makemigrations students
+python manage.py makemigrations
 
 # # Apply
 # python manage.py migrate --run-syncdb
 
 # Apply database migrations
-python manage.py migrate students
+python manage.py migrate
 
 # Run Django server
 python manage.py runserver 0.0.0.0:80
