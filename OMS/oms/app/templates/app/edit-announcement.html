@@ -9,6 +9,78 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/main-dashboard.css' %}">
     <title>Admin - OJT Management System Dashboard</title>
+    <style>
+        .preview-box {
+            border: 2px dashed #ccc;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 216px;
+            margin-bottom: 20px;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            background-color: #f8f9fa;
+        }
+        .preview-box input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .preview-box img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        .preview-box::before {
+            color: #888;
+            font-size: 16px;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+        .upload-box {
+            border: 2px dashed #ccc;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 216px;
+            margin-bottom: 20px;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            background-color: #f8f9fa;
+        }
+        .upload-box input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .upload-box img {
+            max-width: 100%;
+            max-height: 100%;
+            display: none;
+        }
+        .upload-box::before {
+            content: 'Choose File';
+            color: #888;
+            font-size: 16px;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 </head>
 <body>
     <div class="d-flex" id="wrapper">
@@ -69,39 +141,38 @@
             </nav>
             <!-- Card -->
             <div class="container-fluid">
-                <h2 class="mt-4">Announcement</h2>
-                <div class="d-flex justify-content-end mb-2">
-                    <a href="{% url 'announcement' %}" class="btn btn-success">Add Announcement</a>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Image</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for announcement in listOfAnnouncement %}
-                        <tr>
-                            <td>{{ announcement.Title }}</td>
-                            <td>
+                <h2 class="mt-4">Edit Announcement</h2>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="Title">Title</label>
+                        {{ form.Title }}
+                    </div>
+                    <div class="form-group">
+                        <label for="Image" style="font-size: 12px;">Preview Image (recommended dimension: 1280 x 400)</label><br>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                            <div id="image-preview" class="preview-box">
                                 {% if announcement.Image %}
-                                    <img src="{{ announcement.Image.url }}" alt="{{ announcement.Title }}" style="max-width: 100px;">
-                                {% else %}
-                                    No Image
+                                    <img src="{{ announcement.Image.url }}" alt="Current Image" style="max-width: 200px;" id="current-image"><br>
                                 {% endif %}
-                            </td>
-                            <td style="text-transform: capitalize;">{{ announcement.Status }}</td>
-                            <td>
-                                <a href="{% url 'editAnnouncement' announcement.id %}" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i></a>
-                                <a href="" class="btn btn-danger"><i class="fa-solid fa-trash"></i></a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                            </div>
+                            <div>
+                                <div class="upload-box">
+                                    {{ form.Image }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="Description">Description</label>
+                        {{ form.Description }}
+                    </div>
+                    <div class="form-group">
+                        <label for="Status">Status</label>
+                        {{ form.Status }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Announcement</button>
+                </form>
             </div>
         </div>
     </div>
@@ -113,6 +184,18 @@
         $(".navbar-toggler").click(function(e) {
             e.preventDefault();
             $("#wrapper").toggleClass("toggled");
+        });
+
+        // Image preview functionality
+        // Image preview functionality
+        $(document).ready(function() {
+            $("input[type='file']").change(function(e) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#image-preview').html('<img src="' + e.target.result + '" style="max-width: 500px;" alt="New Image Preview">');
+                }
+                reader.readAsDataURL(this.files[0]);
+            });
         });
     </script>
 </body>

@@ -33,6 +33,7 @@ urlpatterns = [
     # 
     path('announcement', views.announcement, name='announcement'),
     path('listOfAnnouncement', views.listOfAnnouncement, name='listOfAnnouncement'),
+    path('editAnnouncement/<int:id>/', views.editAnnouncement, name='editAnnouncement'),
 
 ]
 

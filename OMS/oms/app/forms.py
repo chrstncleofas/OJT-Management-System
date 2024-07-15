@@ -1,6 +1,7 @@
 from django import forms
 from .models import AnnouncementTable
 from django.contrib.auth import get_user_model
+from .custom_widgets import CustomClearableFileInput
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import PasswordChangeForm
 
@@ -47,6 +48,7 @@ class AnnouncementForm(forms.ModelForm):
         widgets = {
             'Title': forms.TextInput(attrs={'class': 'form-control'}),
             'Description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'Image': CustomClearableFileInput,
         }
 
         def __init__(self, *args, **kwargs):

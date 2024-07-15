@@ -363,3 +363,28 @@ def announcement(request):
             'lastName': lastName
         }
     )
+
+def editAnnouncement(request, id):
+    user = request.user
+    admin = get_object_or_404(CustomUser, id=user.id)
+    firstName = admin.first_name
+    lastName = admin.last_name
+
+    announcement = get_object_or_404(AnnouncementTable, id=id)
+
+    if request.method == 'POST':
+        form = AnnouncementForm(request.POST, request.FILES, instance=announcement)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Announcement has been updated successfully.')
+            return redirect('listOfAnnouncement')
+    else:
+        form = AnnouncementForm(instance=announcement)
+
+    return render(request, 'app/edit-announcement.html', {
+        'form': form,
+        'firstName': firstName,
+        'lastName': lastName,
+        'announcement': announcement,
+    })
+
