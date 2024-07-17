@@ -1,6 +1,7 @@
 from django import forms
 from app.models import CustomUser
 from students.models import Tablestudent, TimeLog
+from students.custom_widgets import CustomClearableFileInput
 
 COURSE_CHOICES = [
     ('', '--- Select Course ---'),
@@ -98,6 +99,20 @@ class StudentRegistrationForm(forms.ModelForm):
         self.fields['Lastname'].required = True
         self.fields['Course'].required = True
         self.fields['Year'].required = True
+
+
+class StudentProfileForm(forms.ModelForm):
+    class Meta:
+        model = Tablestudent
+        fields = ['Firstname', 'Lastname', 'Email', 'Course', 'Year', 'Image']
+        widgets = {
+            'Firstname': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter First Name'}),
+            'Lastname': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Last Name'}),
+            'Email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter Email'}),
+            'Course': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Course'}),
+            'Year': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Year'}),
+            'Image': CustomClearableFileInput,
+        }
 
 class ChangePasswordForm(forms.Form):
     current_password = forms.CharField(

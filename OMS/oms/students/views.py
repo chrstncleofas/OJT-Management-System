@@ -11,7 +11,7 @@ from django.contrib.auth.hashers import check_password
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-from students.forms import StudentRegistrationForm, UserForm, ChangePasswordForm, TimeLogForm
+from students.forms import StudentRegistrationForm, UserForm, ChangePasswordForm, TimeLogForm, StudentProfileForm
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, JsonResponse
 
 def studentHome(request) -> HttpResponse:
@@ -39,12 +39,14 @@ def welcomeDashboard(request) -> HttpResponse:
 def mainPageForDashboard(request) -> HttpResponse:
     user = request.user
     student = get_object_or_404(Tablestudent, user=user)
+    # 
+    studentID = student.StudentID
     firstName = student.Firstname
     lastName = student.Lastname
     email = student.Email
     course = student.Course
     year = student.Year
-
+    # 
     return render(
         request,
         'students/student-dashboard.html',
@@ -54,6 +56,8 @@ def mainPageForDashboard(request) -> HttpResponse:
             'email': email,
             'course': course,
             'year': year,
+            'student': student,
+            'studentID': studentID
         }
     )
 
@@ -97,35 +101,25 @@ def TimeInAndTimeOut(request):
 def studentProfile(request):
     user = request.user
     student = get_object_or_404(Tablestudent, user=user)
-    
+
     if request.method == 'POST':
-        firstName = request.POST.get('Firstname')
-        lastName = request.POST.get('Lastname')
-        email = request.POST.get('Email')
-        course = request.POST.get('Course')
-        year = request.POST.get('Year')
+        form = StudentProfileForm(request.POST, request.FILES, instance=student)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile updated successfully.')
+            return redirect('students:profile')
+    else:
+        form = StudentProfileForm(instance=student)
 
-        student.Firstname = firstName
-        student.Lastname = lastName
-        student.Email = email
-        student.Course = course
-        student.Year = year
-        student.save()
-
-        messages.success(request, 'Profile updated successfully.')
-        return redirect('students:profile')
-
-    return render(
-        request,
-        'students/student-profile.html',
-        {
-            'firstName': student.Firstname,
-            'lastName': student.Lastname,
-            'email': student.Email,
-            'course': student.Course,
-            'year': student.Year,
-        }
-    )
+    return render(request, 'students/student-profile.html', {
+        'form': form,
+        'firstName': student.Firstname,
+        'lastName': student.Lastname,
+        'email': student.Email,
+        'course': student.Course,
+        'year': student.Year,
+        'student': student,
+    })
 
 def changePassword(request):
     user = request.user
