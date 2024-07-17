@@ -107,7 +107,7 @@ def studentProfile(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Profile updated successfully.')
-            return redirect('students:profile')
+            return redirect('students:Dashboard')
     else:
         form = StudentProfileForm(instance=student)
 
