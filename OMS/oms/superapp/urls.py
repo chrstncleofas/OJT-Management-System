@@ -7,8 +7,11 @@ from django.conf.urls.static import static
 app_name = 'superapp'
 
 urlpatterns = [
-    path('', views.superHome, name='home'),
-    path('createSuperAccount/', views.createSuperAccount, name='createSuperAccount'),
+    path('', views.superHome, name='superHome'),
+    path('superLogin', views.superAdminLogin, name='superLogin'),
+    path('loggingOut/', views.loggingOut, name='loggingOut'),
+    path('superAdminDashboard/', views.superAdminDashboard, name='superAdminDashboard'),
+    path('mainDashboard', views.mainDashboard, name='mainDashboard'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
