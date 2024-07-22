@@ -7,6 +7,7 @@ from django.core.files.base import ContentFile
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from students.models import Tablestudent, TimeLog
+from app.models import AnnouncementTable
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -33,6 +34,15 @@ def welcomeDashboard(request) -> HttpResponse:
         {
             'firstName': firstName,
             'lastName': lastName,
+        }
+    )
+
+def announcement(request):
+    enabledAnnouncement = AnnouncementTable.objects.filter(Status='enable')
+    return render(
+        request, 'students/announcement.html', 
+        {
+            'announcements': enabledAnnouncement
         }
     )
 
