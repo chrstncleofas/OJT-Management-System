@@ -145,3 +145,17 @@ class TimeLogForm(forms.ModelForm):
         self.fields['image'].required = True
         self.fields['image'].widget.attrs.update({'accept': 'image/*'})
         self.fields['action'].widget = forms.HiddenInput()
+
+class EditStudentForm(forms.ModelForm):
+    class Meta:
+        model = Tablestudent
+        fields = ['Firstname', 'Middlename', 'Lastname', 'Email', 'Course', 'Year', 'status']
+        widgets = {
+            'Firstname': forms.TextInput(attrs={'class': 'form-control'}),
+            'Middlename': forms.TextInput(attrs={'class': 'form-control'}),
+            'Lastname': forms.TextInput(attrs={'class': 'form-control'}),
+            'Email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'Course': forms.TextInput(attrs={'class': 'form-control'}),
+            'Year': forms.NumberInput(attrs={'class': 'form-control'}),
+            'status': forms.Select(attrs={'class': 'form-control'}),
+        }

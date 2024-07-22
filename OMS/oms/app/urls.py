@@ -19,12 +19,12 @@ urlpatterns = [
     path('changePass', views.changePass, name='changePass'),
     path('mainDashboard', views.mainDashboard, name='mainDashboard'),
     path('studentManagement', views.studentManagement, name='studentManagement'),
-    path('editStudents', views.editStudents, name='editStudents'),
+    path('editStudentDetails/<int:studentID>/', views.editStudentDetails, name='editStudentDetails'),
     # 
     path('approve_student/<int:id>/', views.approve_student, name='approve_student'),
     path('reject_students/<int:id>/', views.reject_students, name='reject_students'),
     # 
-    path('<int:id>/archivedStudent/', views.archivedStudent, name='archivedStudent'),
+    path('archivedStudent/<int:studentID>/', views.archivedStudent, name='archivedStudent'),
     path('unArchivedStudent/<int:id>/', views.unArchivedStudent, name='unArchivedStudent'),
     # 
     path('getAllPendingRegister', views.getAllPendingRegister, name='getAllPendingRegister'),
@@ -34,7 +34,7 @@ urlpatterns = [
     path('announcement', views.announcement, name='announcement'),
     path('listOfAnnouncement', views.listOfAnnouncement, name='listOfAnnouncement'),
     path('editAnnouncement/<int:id>/', views.editAnnouncement, name='editAnnouncement'),
-
+    path('deleteAnnouncement/<int:id>/', views.deleteAnnouncement, name='deleteAnnouncement'),
 ]
 
 if settings.DEBUG:

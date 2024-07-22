@@ -24,6 +24,8 @@ zappa = "^0.59.0"
 celery = "^5.4.0"
 redis = "^5.0.4"
 python-dotenv = ">=0.13.0,<1"
+pymupdf = "^1.24.7"
+reportlab = "^4.2.2"
 
 
 [build-system]

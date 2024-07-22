@@ -6,14 +6,18 @@ from app.models import CustomUser, AnnouncementTable
 from app.forms import EditProfileForm, AnnouncementForm
 from django.contrib import messages
 from students.models import Tablestudent, TimeLog
+from django.http import HttpResponse, JsonResponse
+from students.forms import EditStudentForm
 from django.core.mail import send_mail
 from app.forms import CustomUserCreationForm
 from .forms import CustomPasswordChangeForm
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
+from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect, HttpResponsePermanentRedirect
 
 HOME_URL_PATH = 'app/base.html'
 DASHBOARD = 'app/dashboard.html'
@@ -185,39 +189,6 @@ def register(request):
         form = CustomUserCreationForm()
     return render(request, 'app/register.html', {'form': form})
 
-def editStudents(request):
-    user = request.user
-    student = get_object_or_404(Tablestudent, user=user)
-    
-    if request.method == 'POST':
-        firstName = request.POST.get('Firstname')
-        lastName = request.POST.get('Lastname')
-        email = request.POST.get('Email')
-        course = request.POST.get('Course')
-        year = request.POST.get('Year')
-
-        student.Firstname = firstName
-        student.Lastname = lastName
-        student.Email = email
-        student.Course = course
-        student.Year = year
-        student.save()
-
-        messages.success(request, 'Student successfuly updated...')
-        return redirect('studentManagement')
-
-    return render(
-        request,
-        'app/edit-student.html',
-        {
-            'firstName': student.Firstname,
-            'lastName': student.Lastname,
-            'email': student.Email,
-            'course': student.Course,
-            'year': student.Year,
-        }
-    )
-
 def approve_student(request, id):
     student = Tablestudent.objects.get(id=id)
     student.status = 'approved'
@@ -230,24 +201,6 @@ def reject_students(request, id):
     student.status = 'rejected'
     student.save()
     messages.success(request, f'{student.Firstname} {student.Lastname} has been rejected.')
-    return redirect(reverse('studentManagement'))
-
-def archivedStudent(request):
-    if request.method == 'POST':
-        admin_password = request.POST.get('admin_password')
-        student_id = request.POST.get('student_id')
-        user = request.user
-
-        # Authenticate admin
-        admin_user = authenticate(username=user.username, password=admin_password)
-        if admin_user and admin_user.is_staff:
-            student = get_object_or_404(Tablestudent, id=student_id)
-            student.archivedStudents = 'archive'
-            student.save()
-            messages.success(request, f'{student.Firstname} {student.Lastname} has been archived.')
-        else:
-            messages.error(request, 'Incorrect password. Please try again.')
-
     return redirect(reverse('studentManagement'))
 
 def unArchivedStudent(request, id):
@@ -325,11 +278,22 @@ def viewTimeLogs(request, student_id):
     return render(request, 'app/TimeLogs.html', context)
 
 def viewStudentInformation(request, student_id):
+    user = request.user
+    admin = get_object_or_404(CustomUser, id=user.id)
+    firstName = admin.first_name
+    lastName = admin.last_name
     try:
         student = Tablestudent.objects.get(pk=student_id)
     except Tablestudent.DoesNotExist:
         return HttpResponse('Student not found', status=404)
-    return render(request, 'app/student-view-page.html', {'student': student})
+    return render(
+        request, 'app/student-view-page.html', 
+        {
+            'student': student,
+            'firstName': firstName,
+            'lastName': lastName
+        }
+    )
 
 def listOfAnnouncement(request):
     user = request.user
@@ -353,7 +317,7 @@ def announcement(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Announcement has been added successfully.')
-            return redirect('announcement')
+            return redirect('listOfAnnouncement')
     else:
         form = AnnouncementForm()
     return render(request, ANNOUNCEMENT,
@@ -388,3 +352,49 @@ def editAnnouncement(request, id):
         'announcement': announcement,
     })
 
+def editStudentDetails(request, studentID):
+    student = get_object_or_404(Tablestudent, pk=studentID)
+    user = request.user
+    # 
+    admin = get_object_or_404(CustomUser, id=user.id)
+    firstName = admin.first_name
+    lastName = admin.last_name
+    # 
+    if request.method == 'POST':
+        form = EditStudentForm(request.POST, instance=student)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Student details updated successfully.')
+            return redirect('studentManagement')
+    else:
+        form = EditStudentForm(instance=student)
+
+    return render(request, 'app/edit-student.html', {
+        'form': form,
+        'student': student,
+        'firstName': firstName,
+        'lastName': lastName,
+    })
+
+@login_required
+@require_POST
+def archivedStudent(request, studentID):
+    admin_username = request.POST.get('username')
+    admin_password = request.POST.get('password')
+    admin_user = authenticate(username=admin_username, password=admin_password)
+    
+    if admin_user and admin_user.is_staff:
+        student = get_object_or_404(Tablestudent, pk=studentID)
+        student.archivedStudents = 'archive'
+        student.save()
+        return JsonResponse({'status': 'success', 'message': f'{student.Firstname} {student.Lastname} has been archived.'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Incorrect username or password.'}, status=401)
+
+def deleteAnnouncement(request, id):
+    announcement = get_object_or_404(AnnouncementTable, id=id)
+    if request.method == 'POST':
+        announcement.delete()
+        messages.success(request, 'Announcement has been deleted successfully.')
+        return redirect('listOfAnnouncement')
+    return render(request, 'app/delete-announcement.html', {'announcement': announcement})
