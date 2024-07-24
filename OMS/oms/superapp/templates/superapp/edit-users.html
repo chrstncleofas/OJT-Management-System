@@ -65,46 +65,29 @@
             </nav>
             <!-- Card -->
             <div class="container-fluid">
-                <h1 class="mt-4">Dashboard</h1>
-                <div class="row">
-                    <div class="col-lg-4">
-                        <div class="card text-white bg-success">
-                            <div class="card-body">
-                                <i class="fas fa-check-circle icon"></i>
-                                <div>
-                                    <div class="count">{{ approve_count }}</div>
-                                    <div>Approved</div>
-                                </div>
-                            </div>
+                <h3 class="mt-4 mb-4">Edit User</h3>
+                <form method="post" class="center-form col-md-12">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="form-group col-md-3">
+                            <label for="StudentID">First Name:</label>
+                            <input type="text" class="form-control" id="StudentID" name="StudentID" value="{{ admin.first_name }}" required>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="Firstname">Last Name:</label>
+                            <input type="text" class="form-control" id="Firstname" name="Firstname" value="{{ admin.last_name }}" required>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="Firstname">Email:</label>
+                            <input type="text" class="form-control" id="Middlename" name="Middlename" value="{{ admin.email }}" required>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="Lastname">Role</label>
+                            {{ form.position }}
                         </div>
                     </div>
-                    <div class="col-lg-4">
-                        <a href="" style="text-decoration: none;">
-                            <div class="card text-white bg-warning">
-                                <div class="card-body">
-                                    <i class="fas fa-hourglass-half icon"></i>
-                                    <div>
-                                        <div class="count">{{ pending_count }}</div>
-                                        <div>Pending Registration</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-lg-4">
-                        <a href="" style="text-decoration: none;">
-                            <div class="card text-white bg-danger">
-                                <div class="card-body">
-                                    <i class="fas fa-close icon"></i>
-                                    <div>
-                                        <div class="count">{{ reject_count }}</div>
-                                        <div>Disapprove Registration</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
+                    <button type="submit" class="btn btn-primary mb-3">Update Profile</button>
+                </form>
             </div>
         </div>
     </div>

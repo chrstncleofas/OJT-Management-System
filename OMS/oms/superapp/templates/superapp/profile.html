@@ -65,46 +65,38 @@
             </nav>
             <!-- Card -->
             <div class="container-fluid">
-                <h1 class="mt-4">Dashboard</h1>
-                <div class="row">
-                    <div class="col-lg-4">
-                        <div class="card text-white bg-success">
-                            <div class="card-body">
-                                <i class="fas fa-check-circle icon"></i>
-                                <div>
-                                    <div class="count">{{ approve_count }}</div>
-                                    <div>Approved</div>
-                                </div>
-                            </div>
+                <h1 class="mt-4">Edit Profile</h1>
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-primary" role="alert">
+                            {{ message }}
                         </div>
+                    {% endfor %}
+                {% endif %}
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        {{ form.username }}
                     </div>
-                    <div class="col-lg-4">
-                        <a href="" style="text-decoration: none;">
-                            <div class="card text-white bg-warning">
-                                <div class="card-body">
-                                    <i class="fas fa-hourglass-half icon"></i>
-                                    <div>
-                                        <div class="count">{{ pending_count }}</div>
-                                        <div>Pending Registration</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
+                    <div class="form-group">
+                        <label for="first_name">First Name</label>
+                        {{ form.first_name }}
                     </div>
-                    <div class="col-lg-4">
-                        <a href="" style="text-decoration: none;">
-                            <div class="card text-white bg-danger">
-                                <div class="card-body">
-                                    <i class="fas fa-close icon"></i>
-                                    <div>
-                                        <div class="count">{{ reject_count }}</div>
-                                        <div>Disapprove Registration</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
+                    <div class="form-group">
+                        <label for="last_name">Last Name</label>
+                        {{ form.last_name }}
                     </div>
-                </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        {{ form.email }}
+                    </div>
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        {{ form.position }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                </form>   
             </div>
         </div>
     </div>

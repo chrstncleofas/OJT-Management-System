@@ -8,10 +8,14 @@ app_name = 'superapp'
 
 urlpatterns = [
     path('', views.superHome, name='superHome'),
+    path('editUserProfile/', views.editUserProfile, name='editUserProfile'),
+    path('editUsers/<int:id>/', views.editUsers, name='editUsers'),
     path('superLogin', views.superAdminLogin, name='superLogin'),
     path('loggingOut/', views.loggingOut, name='loggingOut'),
     path('superAdminDashboard/', views.superAdminDashboard, name='superAdminDashboard'),
-    path('mainDashboard', views.mainDashboard, name='mainDashboard'),
+    path('mainDashboard/', views.mainDashboard, name='mainDashboard'),
+    path('getAllTheUserAccount/', views.getAllTheUserAccount, name='getAllTheUserAccount'),
+    path('getActivityLogs/', views.getActivityLogs, name='getActivityLogs'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

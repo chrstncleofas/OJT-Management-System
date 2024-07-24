@@ -123,11 +123,11 @@
                         </div>
                         <div class="col-md-8">
                             {% if messages %}
-                            {% for message in messages %}
-                            <div class="alert alert-primary" role="alert">
-                                {{ message }}
-                            </div>
-                            {% endfor %}
+                                {% for message in messages %}
+                                    <div class="alert alert-primary" role="alert">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
                             {% endif %}
                             <div class="form-group">
                                 <label for="first_name">First Name</label>

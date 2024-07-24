@@ -1,18 +1,16 @@
 from typing import Union
 from datetime import timedelta
+from django.db.models import Q
 from django.urls import reverse
+from app.models import CustomUser
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.core.mail import send_mail
-from superapp.forms import SuperuserForm
+from superapp.forms import EditUsersForm
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from students.models import Tablestudent, TimeLog
-from app.models import CustomUser, AnnouncementTable
-from app.forms import EditProfileForm, AnnouncementForm
-from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import user_passes_test
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
 
 DASHBOARD = 'superapp/dashboard.html'
@@ -51,6 +49,73 @@ def mainDashboard(request):
             'lastName': lastName
         }
     )
+
+def getAllTheUserAccount(request):
+    user = request.user
+    admin = get_object_or_404(CustomUser, id=user.id)    
+    firstName = admin.first_name
+    lastName = admin.last_name
+    admin_users = CustomUser.objects.filter(Q(is_staff=True) or Q(is_superuser=True))
+    return render(request, 'superapp/users.html', {
+        'getAllTheUserAccount': admin_users,
+        'firstName': firstName,
+        'lastName': lastName
+    })
+
+def getActivityLogs(request):
+    user = request.user
+    admin = get_object_or_404(CustomUser, id=user.id)
+    # 
+    firstName = admin.first_name
+    lastName = admin.last_name
+    # 
+    admin_users = CustomUser.objects.filter(Q(is_staff=True) or Q(is_superuser=True) or Q(is_superuser=False))
+    return render(request, 'superapp/activitylogs.html', {
+        'getActivityLogs': admin_users,
+        'firstName': firstName,
+        'lastName': lastName
+    })
+
+def editUsers(request, id):
+    admin = get_object_or_404(CustomUser, id=id)
+    
+    firstName = admin.first_name
+    lastName = admin.last_name
+    
+    if request.method == 'POST':
+        form = EditUsersForm(request.POST, instance=admin)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile updated successfully.')
+            return redirect('superapp:editUsers')
+    else:
+        form = EditUsersForm(instance=admin)
+    return render(request, 'superapp/edit-users.html', {
+        'admin': admin,
+        'form': form,
+        'firstName': firstName,
+        'lastName': lastName
+    })
+
+
+def editUserProfile(request):
+    user = request.user
+    admin = get_object_or_404(CustomUser, id=user.id)
+    firstName = admin.first_name
+    lastName = admin.last_name
+    if request.method == 'POST':
+        form = EditUsersForm(request.POST, instance=admin)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile updated successfully.')
+            return redirect('superapp:editUserProfile')
+    else:
+        form = EditUsersForm(instance=admin)
+    return render(request, 'superapp/profile.html', {
+        'form': form,
+        'firstName': firstName,
+        'lastName': lastName
+    })
 
 def superAdminLogin(request):
     if request.method == 'POST':
