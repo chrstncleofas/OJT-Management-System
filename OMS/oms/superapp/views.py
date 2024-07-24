@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.core.mail import send_mail
 from superapp.forms import EditUsersForm
+from app.forms import EditUsersDetailsForm
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from students.models import Tablestudent, TimeLog
@@ -76,23 +77,27 @@ def getActivityLogs(request):
         'lastName': lastName
     })
 
-def editUsers(request, id):
-    admin = get_object_or_404(CustomUser, id=id)
-    
+def editUsers(request, id): 
+    toEditDetails = admin = get_object_or_404(CustomUser, pk=id)
+    # 
+    user = request.user
+    admin = get_object_or_404(CustomUser, id=user.id)
+    # 
     firstName = admin.first_name
     lastName = admin.last_name
     
     if request.method == 'POST':
-        form = EditUsersForm(request.POST, instance=admin)
+        form = EditUsersDetailsForm(request.POST, instance=toEditDetails)
         if form.is_valid():
             form.save()
             messages.success(request, 'Profile updated successfully.')
-            return redirect('superapp:editUsers')
+            return redirect('superapp:getAllTheUserAccount')
     else:
-        form = EditUsersForm(instance=admin)
+        form = EditUsersDetailsForm(instance=toEditDetails)
     return render(request, 'superapp/edit-users.html', {
-        'admin': admin,
         'form': form,
+        'admin': admin,
+        'toEditDetails': toEditDetails,
         'firstName': firstName,
         'lastName': lastName
     })

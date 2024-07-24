@@ -72,10 +72,10 @@
                 <table class="table">
                     <thead>
                         <tr>
+                            <th>Username</th>
                             <th>Firstname</th>
                             <th>Lastname</th>
                             <th>Email</th>
-                            <th>Role</th>
                             <th>Role</th>
                             <th>Actions</th>
                         </tr>
@@ -83,6 +83,7 @@
                     <tbody>
                         {% for users in getAllTheUserAccount %}
                         <tr>
+                            <td>{{ users.username }}</td>
                             <td style="text-transform: uppercase;">{{ users.first_name }}</td>
                             <td style="text-transform: uppercase;">{{ users.last_name }}</td>
                             <td style="color: blue; text-decoration: underline; cursor: pointer;">{{ users.email }}</td>

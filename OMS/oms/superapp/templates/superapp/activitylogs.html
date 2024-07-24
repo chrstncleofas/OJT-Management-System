@@ -69,6 +69,7 @@
                 <table class="table">
                     <thead>
                         <tr>
+                            <th>Username</th>
                             <th>Firstname</th>
                             <th>Lastname</th>
                             <th>Email</th>
@@ -79,11 +80,12 @@
                     <tbody>
                         {% for logs in getActivityLogs %}
                         <tr>
+                            <td>{{ logs.username }}</td>
                             <td style="text-transform: uppercase;">{{ logs.first_name }}</td>
                             <td style="text-transform: uppercase;">{{ logs.last_name }}</td>
                             <td style="color: blue; text-decoration: underline; cursor: pointer;">{{ logs.email }}</td>
                             <td style="text-transform: uppercase;">{{ logs.position }}</td>
-                            <td style="text-transform: uppercase;">{{ logs.last_login }}</td>
+                            <td>{{ logs.last_login }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

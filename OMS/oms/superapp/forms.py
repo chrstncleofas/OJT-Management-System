@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 
 ROLE_OPTION = [
     ('', '--- Select Role ---'),
+    ('Super Admin', 'Super Admin'),
     ('Admin', 'Admin'),
     ('Coordinator', 'Coordinator'),
 ]
@@ -28,3 +29,4 @@ class EditUsersForm(forms.ModelForm):
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
         }
+

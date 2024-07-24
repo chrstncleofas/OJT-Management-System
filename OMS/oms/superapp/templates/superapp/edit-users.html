@@ -66,27 +66,27 @@
             <!-- Card -->
             <div class="container-fluid">
                 <h3 class="mt-4 mb-4">Edit User</h3>
-                <form method="post" class="center-form col-md-12">
+                <form method="post" class="center-form col-md-12" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-row">
                         <div class="form-group col-md-3">
-                            <label for="StudentID">First Name:</label>
-                            <input type="text" class="form-control" id="StudentID" name="StudentID" value="{{ admin.first_name }}" required>
+                            <label for="first_name">First Name:</label>
+                            <input type="text" class="form-control" id="first_name" name="first_name" value="{{ toEditDetails.first_name }}" required>
                         </div>
                         <div class="form-group col-md-3">
-                            <label for="Firstname">Last Name:</label>
-                            <input type="text" class="form-control" id="Firstname" name="Firstname" value="{{ admin.last_name }}" required>
+                            <label for="last_name">Last Name:</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name" value="{{ toEditDetails.last_name }}" required>
                         </div>
                         <div class="form-group col-md-3">
-                            <label for="Firstname">Email:</label>
-                            <input type="text" class="form-control" id="Middlename" name="Middlename" value="{{ admin.email }}" required>
+                            <label for="email">Email:</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ toEditDetails.email }}" required>
                         </div>
                         <div class="form-group col-md-3">
-                            <label for="Lastname">Role</label>
-                            {{ form.position }}
+                            <label for="position">Role</label>
+                            <input type="text" class="form-control" id="position" name="position" value="{{ toEditDetails.position }}" required>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary mb-3">Update Profile</button>
+                    <button type="submit" class="btn btn-primary mb-3">Update</button>
                 </form>
             </div>
         </div>
