@@ -169,26 +169,6 @@ def user_login(request):
             messages.error(request, 'Invalid username or password.')
     return render(request, 'app/base.html')
 
-def register(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.is_staff = True
-            user.save()
-            username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
-            login(request, user)
-            return render(request, 'app/success.html', {'message': 'Registration successful!'})
-        else:
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field}: {error}")
-    else:
-        form = CustomUserCreationForm()
-    return render(request, 'app/register.html', {'form': form})
-
 def approve_student(request, id):
     student = Tablestudent.objects.get(id=id)
     student.status = 'approved'

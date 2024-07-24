@@ -11,6 +11,7 @@ urlpatterns = [
     path('editUserProfile/', views.editUserProfile, name='editUserProfile'),
     path('editUsers/<int:id>/', views.editUsers, name='editUsers'),
     path('superLogin', views.superAdminLogin, name='superLogin'),
+    path('addUsers', views.addUsers, name='addUsers'),
     path('loggingOut/', views.loggingOut, name='loggingOut'),
     path('superAdminDashboard/', views.superAdminDashboard, name='superAdminDashboard'),
     path('mainDashboard/', views.mainDashboard, name='mainDashboard'),

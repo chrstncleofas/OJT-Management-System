@@ -65,37 +65,47 @@
             </nav>
             <!-- Card -->
             <div class="container-fluid">
-                <h3 class="mt-4 mb-4">Edit User</h3>
-                <form method="post" class="center-form col-md-12" enctype="multipart/form-data">
+                <h3 class="mt-4 mb-4">Add User</h3>
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <form method="post" action="{% url 'superapp:addUsers' %}">
                     {% csrf_token %}
                     <div class="form-row">
-                        <div class="form-group col-md-4">
-                            <label for="username">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" value="{{ toEditDetails.username }}" required>
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="first_name">First Name:</label>
-                            <input type="text" class="form-control" id="first_name" name="first_name" value="{{ toEditDetails.first_name }}" required>
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="last_name">Last Name:</label>
-                            <input type="text" class="form-control" id="last_name" name="last_name" value="{{ toEditDetails.last_name }}" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="email">Email:</label>
-                            <input type="email" class="form-control" id="email" name="email" value="{{ toEditDetails.email }}" required>
+                            <label for="firstName">First Name</label>
+                            <input type="text" class="form-control" id="firstName" name="first_name" required>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="position">Role</label>
-                            <input type="text" class="form-control" id="position" name="position" value="{{ toEditDetails.position }}" required>
+                            <label for="lastName">Last Name</label>
+                            <input type="text" class="form-control" id="lastName" name="last_name" required>
                         </div>
                     </div>
-                    <div class="d-flex justify-content-start mb-2">
-                        <button type="submit" class="btn btn-primary mb-3">Update</button>
-                        <a href="{% url 'superapp:getAllTheUserAccount' %}" class="btn btn-primary mb-3 ml-2">Back</a>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
                     </div>
+                    <div class="form-group">
+                        <label for="position">Position</label>
+                        {{ form.position}}
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="registerUsername" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="registerPassword1" name="password1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" class="form-control" id="registerPassword2" name="password2" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary mb-3">Save</button>
                 </form>
             </div>
         </div>

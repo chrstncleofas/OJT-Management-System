@@ -48,8 +48,6 @@
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-
-
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
                         <li class="nav-item dropdown">
@@ -70,7 +68,17 @@
             <!-- Card -->
             <div class="container-fluid">
                 <h2 class="mt-4">Announcement</h2>
-                <div class="d-flex justify-content-end mb-2">
+                <div class="d-flex justify-content-between mb-3 mt-3">
+                    <form class="form-inline">
+                        <div class="input-group">
+                            <input type="search" class="form-control" placeholder="Search....." aria-label="Search" aria-describedby="search-icon">
+                            <div class="input-group-prepend" style="cursor: pointer;">
+                                <span class="input-group-text" id="search-icon">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
                     <a href="{% url 'announcement' %}" class="btn btn-success">Add Announcement</a>
                 </div>
                 <table class="table">

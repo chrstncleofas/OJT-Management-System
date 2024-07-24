@@ -9,6 +9,15 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/main-dashboard.css' %}">
     <title>Super Admin - OJT Management System Dashboard</title>
+    <style>
+        .form-inline .form-control {
+            width: auto;
+            flex: 1;
+        }
+        .form-inline .btn-outline-success {
+            margin-left: 0.5rem;
+        }
+    </style>
 </head>
 <body>
     <div class="d-flex" id="wrapper">
@@ -65,9 +74,19 @@
             </nav>
             <!-- Card -->
             <div class="container-fluid">
-                <h1 class="mt-4">Users</h1>
-                <div class="d-flex justify-content-end mb-2">
-                    <a href="" class="btn btn-success">Add User</a>
+                <h2 class="mt-4">Users</h2>
+                <div class="d-flex justify-content-between mb-3 mt-3">
+                    <form class="form-inline">
+                        <div class="input-group">
+                            <input type="search" class="form-control" placeholder="Search....." aria-label="Search" aria-describedby="search-icon">
+                            <div class="input-group-prepend" style="cursor: pointer;">
+                                <span class="input-group-text" id="search-icon">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
+                    <a href="{% url 'superapp:addUsers' %}" class="btn btn-success">Add User</a>
                 </div>
                 <table class="table">
                     <thead>

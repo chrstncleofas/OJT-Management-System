@@ -18,9 +18,21 @@ ROLE_OPTION = [
 ]
 
 class CustomUserCreationForm(UserCreationForm):
+
+    position = position = forms.ChoiceField(
+        choices=ROLE_OPTION,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
     class Meta:
         model = get_user_model()
         fields = ['username', 'first_name', 'last_name', 'email', 'position']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
 
 class EditProfileForm(forms.ModelForm):
     class Meta:

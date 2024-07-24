@@ -8,6 +8,7 @@ from django.shortcuts import redirect
 from django.core.mail import send_mail
 from superapp.forms import EditUsersForm
 from app.forms import EditUsersDetailsForm
+from app.forms import CustomUserCreationForm
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from students.models import Tablestudent, TimeLog
@@ -92,6 +93,8 @@ def editUsers(request, id):
             form.save()
             messages.success(request, 'Profile updated successfully.')
             return redirect('superapp:getAllTheUserAccount')
+        else:
+            print(form.errors)
     else:
         form = EditUsersDetailsForm(instance=toEditDetails)
     return render(request, 'superapp/edit-users.html', {
@@ -121,6 +124,26 @@ def editUserProfile(request):
         'firstName': firstName,
         'lastName': lastName
     })
+
+def addUsers(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_staff = True
+            user.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return render(request, 'superapp/success.html', {'message': 'Registration successful!'})
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'superapp/add-users.html', {'form': form})
 
 def superAdminLogin(request):
     if request.method == 'POST':
