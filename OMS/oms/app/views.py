@@ -251,23 +251,27 @@ def viewTimeLogs(request, student_id):
     daily_start = None
     daily_total = timedelta()
 
-    for log in time_logs:
-        if log.action == 'IN':
-            daily_start = log.timestamp
-        elif log.action == 'OUT' and daily_start:
-            work_period = log.timestamp - daily_start
-            if work_period > timedelta(hours=1):
-                work_period -= timedelta(hours=1)
-            daily_total += work_period
-            daily_start = None
+    paired_logs = []  # List to hold the paired logs
+
+    i = 0
+    while i < len(time_logs):
+        if time_logs[i].action == 'IN':
+            if i + 1 < len(time_logs) and time_logs[i + 1].action == 'OUT':
+                paired_logs.append((time_logs[i], time_logs[i + 1]))
+                work_period = time_logs[i + 1].timestamp - time_logs[i].timestamp
+                if work_period > timedelta(hours=1):
+                    work_period -= timedelta(hours=1)
+                daily_total += work_period
+                i += 1  # Skip the next log since it is already paired
+        i += 1
 
     total_work_seconds = daily_total.total_seconds()
     total_hours = total_work_seconds / 3600
 
     remaining_hours = required_hours - total_hours
-    
+
     context = {
-        'time_logs': time_logs,
+        'paired_logs': paired_logs,
         'total_hours': total_hours,
         'required_hours': required_hours,
         'remaining_hours': remaining_hours,
@@ -276,6 +280,7 @@ def viewTimeLogs(request, student_id):
     }
 
     return render(request, 'app/TimeLogs.html', context)
+
 
 def viewStudentInformation(request, student_id):
     user = request.user

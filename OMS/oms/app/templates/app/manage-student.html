@@ -139,13 +139,13 @@
                                 {% for student in getListOfApproveStudent %}
                                 <tr>
                                     <td>{{ student.StudentID }}</td>
-                                    <td>{{ student.Firstname }}</td>
-                                    <td>{{ student.Middlename }}</td>
-                                    <td>{{ student.Lastname }}</td>
-                                    <td>{{ student.Course }}</td>
-                                    <td>{{ student.Year }}</td>
+                                    <td style="text-transform: uppercase;">{{ student.Firstname }}</td>
+                                    <td style="text-transform: uppercase;">{{ student.Middlename }}</td>
+                                    <td style="text-transform: uppercase;">{{ student.Lastname }}</td>
+                                    <td style="text-transform: uppercase;">{{ student.Course }}</td>
+                                    <td style="text-transform: uppercase;">{{ student.Year }}</td>
                                     <td>
-                                       <p class="text-primary">Approved</p>
+                                       <p style="text-transform: uppercase; font-weight: bold;" class="text-primary">Approved</p>
                                     </td>
                                     <td>
                                         <a href="{% url 'editStudentDetails' student.id %}" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i></a>

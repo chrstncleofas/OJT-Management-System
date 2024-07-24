@@ -120,26 +120,32 @@
                 </div>
             </nav>
             <div class="container-fluid">
-                <h2 class="mt-4">Time Logs for {{ firstName }} {{ lastName }}</h2>
-                {% if time_logs %}
+                <h4 class="mt-4">Time Logs for <span style="text-transform: uppercase;">{{ firstName }} {{ lastName }}</span></h4>
+                {% if paired_logs %}
                 <table class="table table-bordered mt-3">
                     <thead class="thead-dark">
                         <tr>
-                            <th>#</th>
-                            <th>Action</th>
-                            <th>Timestamp</th>
-                            <th>Image</th>
+                            <th>TIME IN</th>
+                            <th>TIME OUT</th>
+                            <th>IMAGE IN</th>
+                            <th>IMAGE OUT</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for log in time_logs %}
+                        {% for in_log, out_log in paired_logs %}
                         <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ log.action }}</td>
-                            <td>{{ log.timestamp }}</td>
+                            <td>{{ in_log.timestamp }}</td>
+                            <td>{{ out_log.timestamp }}</td>
                             <td>
-                                {% if log.image %}
-                                <img src="{{ log.image.url }}" alt="Time {{ log.action }} Image" class="img-fluid" style="width: 100px; height: 100px;">
+                                {% if in_log.image %}
+                                <img src="{{ in_log.image.url }}" alt="Time IN Image" class="img-fluid" style="width: 100px; height: 100px;">
+                                {% else %}
+                                No Image
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if out_log.image %}
+                                <img src="{{ out_log.image.url }}" alt="Time OUT Image" class="img-fluid" style="width: 100px; height: 100px;">
                                 {% else %}
                                 No Image
                                 {% endif %}
