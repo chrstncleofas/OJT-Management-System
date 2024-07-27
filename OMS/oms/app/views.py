@@ -1,3 +1,4 @@
+import json
 from typing import Union
 from datetime import timedelta
 from django.conf import settings
@@ -12,6 +13,7 @@ from students.models import Tablestudent, TimeLog
 from django.http import HttpResponse, JsonResponse
 from django.template.loader import render_to_string
 from app.models import CustomUser, AnnouncementTable
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from app.forms import EditProfileForm, AnnouncementForm
 from django.contrib.auth import update_session_auth_hash
@@ -177,7 +179,7 @@ def approve_student(request, id):
 
     # Send approval email
     subject = 'Your OJT Management System Account Has Been Approved'
-    message = render_to_string('students/approval_email.txt', {
+    message = render_to_string('app/approval_email.txt', {
         'first_name': student.Firstname,
         'last_name': student.Lastname,
     })
@@ -187,22 +189,27 @@ def approve_student(request, id):
     messages.success(request, f'{student.Firstname} {student.Lastname} has been approved.')
     return redirect(reverse('studentManagement'))
 
+@csrf_exempt
 def reject_students(request, id):
-    student = Tablestudent.objects.get(id=id)
-    student.status = 'rejected'
-    student.save()
+    if request.method == 'POST':
+        student = Tablestudent.objects.get(id=id)
+        data = json.loads(request.body)
+        reason = data.get('reason', 'No reason provided')
+        student.status = 'rejected'
+        student.save()
 
-    # Send email notification
-    subject = 'Account Rejected'
-    message = render_to_string('students/rejection_email.txt', {
-        'first_name': student.Firstname,
-        'last_name': student.Lastname,
-    })
-    recipient_list = [student.Email]
-    send_mail(subject, message, settings.EMAIL_HOST_USER, recipient_list, fail_silently=False)
+        # Send email notification
+        subject = 'Account Rejected'
+        message = render_to_string('app/rejection_email.txt', {
+            'first_name': student.Firstname,
+            'last_name': student.Lastname,
+            'reason': reason
+        })
+        recipient_list = [student.Email]
+        send_mail(subject, message, settings.EMAIL_HOST_USER, recipient_list, fail_silently=False)
 
-    messages.success(request, f'{student.Firstname} {student.Lastname} has been rejected.')
-    return redirect(reverse('studentManagement'))
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'failed'}, status=400)
 
 def unArchivedStudent(request, id):
     student = Tablestudent.objects.get(id=id)
