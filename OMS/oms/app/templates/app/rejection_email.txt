@@ -1,4 +1,4 @@
-Subject: Your OJT Management System Account Has Been Rejected
+OJT Management System Account Has Been Rejected
 
 Dear {{ first_name }} {{ last_name }},
 

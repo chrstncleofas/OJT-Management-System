@@ -1,4 +1,4 @@
-Subject: Your OJT Management System Account Has Been Approved
+OJT Management System Account Has Been Approved
 
 Dear {{ first_name }} {{ last_name }},
 
