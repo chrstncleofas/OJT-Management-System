@@ -13,6 +13,13 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-1q^_u(40*=ydaz*%lz0v&
 DEBUG = True
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=Csv())
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'ojtmanagementsystem2024@gmail.com'
+EMAIL_HOST_PASSWORD = 'uklgxtdbbxjdwgda'
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',

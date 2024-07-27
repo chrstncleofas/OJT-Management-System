@@ -1,19 +1,20 @@
-import base64
 from django.urls import reverse
+from django.conf import settings
 from django.utils import timezone
 from django.contrib import messages
 from django.utils.timezone import now
-from django.core.files.base import ContentFile 
+from django.core.mail import send_mail
+from app.models import AnnouncementTable
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from students.models import Tablestudent, TimeLog
-from app.models import AnnouncementTable
+from django.template.loader import render_to_string
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponse, HttpResponseRedirect
 from students.forms import StudentRegistrationForm, UserForm, ChangePasswordForm, TimeLogForm, StudentProfileForm
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, JsonResponse
 
 def studentHome(request) -> HttpResponse:
     return render(request, 'students/student-base.html')
@@ -178,6 +179,18 @@ def studentRegister(request):
             student.Username = user.username
             student.Password = user.password
             student.save()
+
+            # Sending email notification
+            subject = 'Registration Successful'
+            message = render_to_string('students/registration_email.txt', {
+                'first_name': student.Firstname,
+                'last_name': student.Lastname,
+                'email': student.Email,
+                'username': student.Username,
+            })
+            recipient_list = [student.Email]
+            send_mail(subject, message, settings.EMAIL_HOST_USER, recipient_list, fail_silently=False)
+
             messages.success(request, 'Registration successful. Waiting for admin approval.')
             return redirect('students:success')
         else:

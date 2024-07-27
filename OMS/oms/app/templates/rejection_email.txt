@@ -1,0 +1,10 @@
+Subject: Your OJT Management System Account Has Been Rejected
+
+Dear {{ first_name }} {{ last_name }},
+
+We regret to inform you that your account has been rejected.
+
+For further information, please contact the admin.
+
+Best regards,
+OJT Management System Team

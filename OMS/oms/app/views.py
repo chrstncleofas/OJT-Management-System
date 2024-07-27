@@ -1,23 +1,24 @@
-from datetime import timedelta
 from typing import Union
+from datetime import timedelta
+from django.conf import settings
 from django.urls import reverse
-from django.contrib.auth.decorators import user_passes_test
-from app.models import CustomUser, AnnouncementTable
-from app.forms import EditProfileForm, AnnouncementForm
 from django.contrib import messages
-from students.models import Tablestudent, TimeLog
-from django.http import HttpResponse, JsonResponse
-from students.forms import EditStudentForm
 from django.core.mail import send_mail
-from app.forms import CustomUserCreationForm
+from students.forms import EditStudentForm
 from .forms import CustomPasswordChangeForm
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
+from students.models import Tablestudent, TimeLog
+from django.http import HttpResponse, JsonResponse
+from django.template.loader import render_to_string
+from app.models import CustomUser, AnnouncementTable
+from django.views.decorators.http import require_POST
+from app.forms import EditProfileForm, AnnouncementForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect, HttpResponsePermanentRedirect
+from django.contrib.auth.decorators import user_passes_test
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
 
 HOME_URL_PATH = 'app/base.html'
 DASHBOARD = 'app/dashboard.html'
@@ -173,6 +174,16 @@ def approve_student(request, id):
     student = Tablestudent.objects.get(id=id)
     student.status = 'approved'
     student.save()
+
+    # Send approval email
+    subject = 'Your OJT Management System Account Has Been Approved'
+    message = render_to_string('students/approval_email.txt', {
+        'first_name': student.Firstname,
+        'last_name': student.Lastname,
+    })
+    recipient_list = [student.Email]
+    send_mail(subject, message, settings.EMAIL_HOST_USER, recipient_list, fail_silently=False)
+
     messages.success(request, f'{student.Firstname} {student.Lastname} has been approved.')
     return redirect(reverse('studentManagement'))
 
@@ -180,6 +191,16 @@ def reject_students(request, id):
     student = Tablestudent.objects.get(id=id)
     student.status = 'rejected'
     student.save()
+
+    # Send email notification
+    subject = 'Account Rejected'
+    message = render_to_string('students/rejection_email.txt', {
+        'first_name': student.Firstname,
+        'last_name': student.Lastname,
+    })
+    recipient_list = [student.Email]
+    send_mail(subject, message, settings.EMAIL_HOST_USER, recipient_list, fail_silently=False)
+
     messages.success(request, f'{student.Firstname} {student.Lastname} has been rejected.')
     return redirect(reverse('studentManagement'))
 

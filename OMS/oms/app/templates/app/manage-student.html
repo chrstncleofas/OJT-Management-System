@@ -223,13 +223,54 @@
                                     <td>{{ student.Course }}</td>
                                     <td>{{ student.Year }}</td>
                                     <td>
-                                        <a href="{% url 'approve_student' student.id %}" class="btn btn-primary">Approve</a>
-                                        <a href="{% url 'reject_students' student.id %}" class="btn btn-danger">Disapprove</a>
+                                        <button class="btn btn-primary approve-btn" data-toggle="modal" data-target="#approveModal" data-student-id="{{ student.StudentID }}">Approve</button>
+                                        <button class="btn btn-danger reject-btn" data-toggle="modal" data-target="#rejectModal" data-student-id="{{ student.StudentID }}">Disapprove</button>
                                     </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
+                    </div>
+                    <!-- Approve Modal -->
+                    <div class="modal fade" id="approveModal" tabindex="-1" role="dialog" aria-labelledby="approveModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="approveModalLabel">Confirm Approval</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    Do you want to proceed with this approval?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-primary" id="confirmApproveBtn">Approve</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Reject Modal -->
+                    <div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="rejectModalLabel">Confirm Rejection</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <textarea id="rejectReason" class="form-control" placeholder="Enter reason for rejection"></textarea>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-danger" id="confirmRejectBtn">Reject</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="rejected-application" role="tabpanel" aria-labelledby="rejected-application-tab">
                         <table class="table">
@@ -308,6 +349,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="{% static 'js/index.js' %}"></script>
     <script>
+        const csrfToken = "{{ csrf_token }}";
+
         $(".navbar-toggler").click(function(e) {
             e.preventDefault();
             $("#wrapper").toggleClass("toggled");
@@ -332,6 +375,63 @@
             }
         }
         document.getElementById('id_image').addEventListener('change', previewImage);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            let studentId;
+
+            document.querySelectorAll('.approve-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    studentId = this.getAttribute('data-student-id');
+                    $('#approveModal').modal('show');
+                });
+            });
+
+            document.querySelectorAll('.reject-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    studentId = this.getAttribute('data-student-id');
+                    $('#rejectModal').modal('show');
+                });
+            });
+
+            document.getElementById('confirmApproveBtn').addEventListener('click', function() {
+                const url = "{% url 'approve_student' 0 %}".replace('/0/', '/' + studentId + '/');
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('Failed to approve student.');
+                    }
+                });
+            });
+
+            document.getElementById('confirmRejectBtn').addEventListener('click', function() {
+                const reason = document.getElementById('rejectReason').value;
+                if (reason.trim() === "") {
+                    alert("Please provide a reason for rejection.");
+                    return;
+                }
+                const url = "{% url 'reject_students' 0 %}".replace('/0/', '/' + studentId + '/');
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ reason: reason })
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('Failed to reject student.');
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>
