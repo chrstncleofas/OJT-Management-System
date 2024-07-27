@@ -18,7 +18,7 @@ Prerequisites:
 
 Steps:
 1. Clone the Repository:
-   git clone https://github.com/chrstncleofas/OMS.git
+   git clone [https://github.com/chrstncleofas/OMS.git](https://github.com/chrstncleofas/OJT-Management-System.git)
    cd OMS
 
 2. Install Dependencies:
