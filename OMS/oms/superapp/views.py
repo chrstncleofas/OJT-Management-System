@@ -11,7 +11,7 @@ from app.forms import EditUsersDetailsForm
 from app.forms import CustomUserCreationForm
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
-from students.models import Tablestudent, TimeLog
+from students.models import Tablestudents, TimeLog
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
 
@@ -31,13 +31,13 @@ def mainDashboard(request):
     firstName = admin.first_name
     lastName = admin.last_name
     # Approve
-    approve = Tablestudent.objects.filter(status='approved')
+    approve = Tablestudents.objects.filter(status='approved')
     approve_count = approve.count()
     # Pending
-    pending = Tablestudent.objects.filter(status='pending')
+    pending = Tablestudents.objects.filter(status='pending')
     pending_count = pending.count()
     # Rejected
-    reject = Tablestudent.objects.filter(status='rejected')
+    reject = Tablestudents.objects.filter(status='rejected')
     reject_count = reject.count()
 
     return render(

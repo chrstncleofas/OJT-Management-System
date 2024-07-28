@@ -1,18 +1,18 @@
 import json
 from typing import Union
 from datetime import timedelta
-from django.conf import settings
 from django.urls import reverse
+from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
 from students.forms import EditStudentForm
 from .forms import CustomPasswordChangeForm
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
-from students.models import Tablestudent, TimeLog
+from students.models import Tablestudents, TimeLog
 from django.http import HttpResponse, JsonResponse
 from django.template.loader import render_to_string
-from app.models import CustomUser, AnnouncementTable
+from app.models import CustomUser, Announcement
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from app.forms import EditProfileForm, AnnouncementForm
@@ -43,13 +43,13 @@ def mainDashboard(request):
     firstName = admin.first_name
     lastName = admin.last_name
     # Approve
-    approve = Tablestudent.objects.filter(status='approved')
+    approve = Tablestudents.objects.filter(status='approved')
     approve_count = approve.count()
     # Pending
-    pending = Tablestudent.objects.filter(status='pending')
+    pending = Tablestudents.objects.filter(status='pending')
     pending_count = pending.count()
     # Rejected
-    reject = Tablestudent.objects.filter(status='rejected')
+    reject = Tablestudents.objects.filter(status='rejected')
     reject_count = reject.count()
 
     return render(
@@ -112,7 +112,7 @@ def getAllPendingRegister(request):
     firstName = admin.first_name
     lastName = admin.last_name
     # 
-    students = Tablestudent.objects.filter(is_approved=False)
+    students = Tablestudents.objects.filter(is_approved=False)
     return render(request, MANAGEMENT_STUDENT, {
         'getAllPendingRegister': students,
         'firstName': firstName,
@@ -126,11 +126,11 @@ def studentManagement(request):
     firstName = admin.first_name
     lastName = admin.last_name
     # 
-    approved = Tablestudent.objects.filter(status='approved')
-    pending = Tablestudent.objects.filter(status='pending')
-    rejected = Tablestudent.objects.filter(status='rejected')
+    approved = Tablestudents.objects.filter(status='approved')
+    pending = Tablestudents.objects.filter(status='pending')
+    rejected = Tablestudents.objects.filter(status='rejected')
     # 
-    archive = Tablestudent.objects.filter(archivedStudents='archive')
+    archive = Tablestudents.objects.filter(archivedStudents='archive')
 
     return render(
         request,
@@ -146,13 +146,13 @@ def studentManagement(request):
     )
 
 def getListOfApproveStudent(request):
-    students = Tablestudent.objects.filter(is_approved=True)
+    students = Tablestudents.objects.filter(is_approved=True)
     return render(request, MANAGEMENT_STUDENT, {
         'getListOfApproveStudent': students,
     })
 
 def getListOfArchivedStudents(request):
-    students = Tablestudent.objects.filter(archivedStudents='archive')
+    students = Tablestudents.objects.filter(archivedStudents='archive')
     return render(request, MANAGEMENT_STUDENT, {
         'getListOfArchivedStudents': students,
     })
@@ -165,6 +165,7 @@ def user_login(request):
         if user:
             if user.is_staff and not user.is_superuser:
                 login(request, user)
+                request.session['admin_password'] = user.password
                 return render(request, 'app/loginSuccess.html', {'message': 'Login successful!'})
             else:
                 messages.error(request, 'You do not have the necessary permissions to access this site.')
@@ -173,7 +174,7 @@ def user_login(request):
     return render(request, 'app/base.html')
 
 def approve_student(request, id):
-    student = Tablestudent.objects.get(id=id)
+    student = Tablestudents.objects.get(id=id)
     student.status = 'approved'
     student.save()
 
@@ -192,7 +193,7 @@ def approve_student(request, id):
 @csrf_exempt
 def reject_students(request, id):
     if request.method == 'POST':
-        student = Tablestudent.objects.get(id=id)
+        student = Tablestudents.objects.get(id=id)
         data = json.loads(request.body)
         reason = data.get('reason', 'No reason provided')
         student.status = 'rejected'
@@ -212,7 +213,7 @@ def reject_students(request, id):
     return JsonResponse({'status': 'failed'}, status=400)
 
 def unArchivedStudent(request, id):
-    student = Tablestudent.objects.get(id=id)
+    student = Tablestudents.objects.get(id=id)
     student.archivedStudents = 'unarchive'
     student.save()
     messages.success(request, f'{student.Firstname} {student.Lastname} has been remove to archived.')
@@ -229,7 +230,7 @@ def is_admin(user):
 
 @user_passes_test(is_admin)
 def timeSheet(request):
-    students = Tablestudent.objects.all()
+    students = Tablestudents.objects.all()
     user = request.user
     admin = get_object_or_404(CustomUser, id=user.id)
     firstName = admin.first_name
@@ -245,14 +246,14 @@ def timeSheet(request):
     )
 
 def viewTimeLogs(request, student_id):
-    student = get_object_or_404(Tablestudent, id=student_id)
+    student = get_object_or_404(Tablestudents, id=student_id)
     firstName = student.Firstname
     lastName = student.Lastname
     time_logs = []
     total_hours = 0
     required_hours = 600
 
-    selected_student = get_object_or_404(Tablestudent, id=student_id)
+    selected_student = get_object_or_404(Tablestudents, id=student_id)
     time_logs = TimeLog.objects.filter(student=selected_student).order_by('timestamp')
 
     total_work_seconds = 0
@@ -296,8 +297,8 @@ def viewStudentInformation(request, student_id):
     firstName = admin.first_name
     lastName = admin.last_name
     try:
-        student = Tablestudent.objects.get(pk=student_id)
-    except Tablestudent.DoesNotExist:
+        student = Tablestudents.objects.get(pk=student_id)
+    except Tablestudents.DoesNotExist:
         return HttpResponse('Student not found', status=404)
     return render(
         request, 'app/student-view-page.html', 
@@ -313,7 +314,7 @@ def listOfAnnouncement(request):
     admin = get_object_or_404(CustomUser, id=user.id)
     firstName = admin.first_name
     lastName = admin.last_name
-    announcements = AnnouncementTable.objects.all()
+    announcements = Announcement.objects.all()
     return render(request, LIST_ANNOUNCEMENT, {
         'listOfAnnouncement': announcements,
         'firstName': firstName,
@@ -347,7 +348,7 @@ def editAnnouncement(request, id):
     firstName = admin.first_name
     lastName = admin.last_name
 
-    announcement = get_object_or_404(AnnouncementTable, id=id)
+    announcement = get_object_or_404(Announcement, id=id)
 
     if request.method == 'POST':
         form = AnnouncementForm(request.POST, request.FILES, instance=announcement)
@@ -366,7 +367,7 @@ def editAnnouncement(request, id):
     })
 
 def editStudentDetails(request, studentID):
-    student = get_object_or_404(Tablestudent, pk=studentID)
+    student = get_object_or_404(Tablestudents, pk=studentID)
     user = request.user
     # 
     admin = get_object_or_404(CustomUser, id=user.id)
@@ -392,20 +393,23 @@ def editStudentDetails(request, studentID):
 @login_required
 @require_POST
 def archivedStudent(request, studentID):
-    admin_username = request.POST.get('username')
-    admin_password = request.POST.get('password')
-    admin_user = authenticate(username=admin_username, password=admin_password)
-    
-    if admin_user and admin_user.is_staff:
-        student = get_object_or_404(Tablestudent, pk=studentID)
-        student.archivedStudents = 'archive'
-        student.save()
-        return JsonResponse({'status': 'success', 'message': f'{student.Firstname} {student.Lastname} has been archived.'})
-    else:
-        return JsonResponse({'status': 'error', 'message': 'Incorrect username or password.'}, status=401)
+    studentID = request.POST.get('studentID')
+    student = get_object_or_404(Tablestudents, pk=studentID)
+    student.archivedStudents = 'archive'
+    student.save()
+    return JsonResponse(
+        {
+            'status': 'success', 
+            'message': f'{student.Firstname} {student.Lastname} has been archived.'
+        }
+    )
+
+@login_required
+def get_admin_password_hash(request):
+    return JsonResponse({'password': request.user.password})
 
 def deleteAnnouncement(request, id):
-    announcement = get_object_or_404(AnnouncementTable, id=id)
+    announcement = get_object_or_404(Announcement, id=id)
     if request.method == 'POST':
         announcement.delete()
         messages.success(request, 'Announcement has been deleted successfully.')

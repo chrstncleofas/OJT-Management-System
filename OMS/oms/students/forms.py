@@ -1,6 +1,6 @@
 from django import forms
 from app.models import CustomUser
-from students.models import Tablestudent, TimeLog
+from students.models import Tablestudents, TimeLog
 from students.custom_widgets import CustomClearableFileInput
 
 COURSE_CHOICES = [
@@ -27,12 +27,12 @@ YEAR_CHOICES = [
 class UserForm(forms.ModelForm):
     password = forms.CharField(
         widget=forms.PasswordInput(
-            attrs={'class': 'form-control'}
+            attrs={'class': 'form-control', 'placeholder': 'Create a password'}
         )
     )
     confirm_password = forms.CharField(
         widget=forms.PasswordInput(
-            attrs={'class': 'form-control'}
+            attrs={'class': 'form-control', 'placeholder': 'Re-type your password'}
         )
     )
 
@@ -60,7 +60,7 @@ class UserForm(forms.ModelForm):
 
 class StudentRegistrationForm(forms.ModelForm):
     StudentID = forms.CharField(
-        max_length=10, 
+        max_length=16, 
         label='Student ID',
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex. 18-0000'})
     )
@@ -76,6 +76,12 @@ class StudentRegistrationForm(forms.ModelForm):
         required=False
     )
 
+    Number = forms.CharField(
+        max_length=11, 
+        label='Number',
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex. 09610090120'})
+    )
+
     Year = forms.ChoiceField(
         choices=YEAR_CHOICES,
         widget=forms.Select(attrs={'class': 'form-control'}),
@@ -83,13 +89,13 @@ class StudentRegistrationForm(forms.ModelForm):
     )
 
     class Meta:
-        model = Tablestudent
-        fields = ['StudentID', 'Firstname', 'Middlename', 'Lastname', 'Prefix', 'Number' ,'Course', 'Year']
+        model = Tablestudents
+        fields = ['StudentID', 'Firstname', 'Middlename', 'Lastname', 'Prefix', 'Address', 'Number' ,'Course', 'Year']
         widgets = {
             'Firstname': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter First Name'}),
             'Middlename': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Middle Name'}),
             'Lastname': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Last Name'}),
-            'Number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex. 09610090120'}),
+            'Address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Full Address'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -103,7 +109,7 @@ class StudentRegistrationForm(forms.ModelForm):
 
 class StudentProfileForm(forms.ModelForm):
     class Meta:
-        model = Tablestudent
+        model = Tablestudents
         fields = ['Firstname', 'Lastname', 'Email', 'Course', 'Year', 'Image']
         widgets = {
             'Firstname': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter First Name'}),
@@ -148,7 +154,7 @@ class TimeLogForm(forms.ModelForm):
 
 class EditStudentForm(forms.ModelForm):
     class Meta:
-        model = Tablestudent
+        model = Tablestudents
         fields = ['Firstname', 'Middlename', 'Lastname', 'Email', 'Course', 'Year', 'status']
         widgets = {
             'Firstname': forms.TextInput(attrs={'class': 'form-control'}),

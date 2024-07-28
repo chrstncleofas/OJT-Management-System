@@ -23,6 +23,7 @@ urlpatterns = [
     path('reject_students/<int:id>/', views.reject_students, name='reject_students'),
     # 
     path('archivedStudent/<int:studentID>/', views.archivedStudent, name='archivedStudent'),
+    path('get_admin_password_hash/', views.get_admin_password_hash, name='get_admin_password_hash'),
     path('unArchivedStudent/<int:id>/', views.unArchivedStudent, name='unArchivedStudent'),
     # 
     path('getAllPendingRegister', views.getAllPendingRegister, name='getAllPendingRegister'),

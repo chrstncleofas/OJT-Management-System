@@ -1,5 +1,5 @@
 from django import forms
-from .models import AnnouncementTable
+from .models import Announcement
 from django.contrib.auth import get_user_model
 from .custom_widgets import CustomClearableFileInput
 from django.contrib.auth.forms import UserCreationForm
@@ -62,7 +62,7 @@ class AnnouncementForm(forms.ModelForm):
     )
 
     class Meta:
-        model = AnnouncementTable
+        model = Announcement
         fields = ['Title', 'Image', 'Description', 'Status']
         widgets = {
             'Title': forms.TextInput(attrs={'class': 'form-control'}),
