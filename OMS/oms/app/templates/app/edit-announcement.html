@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/main-dashboard.css' %}">
+    <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
     <title>Admin - OJT Management System Dashboard</title>
     <style>
         .preview-box {
@@ -167,9 +168,19 @@
                         <label for="Description">Description</label>
                         {{ form.Description }}
                     </div>
-                    <div class="form-group">
-                        <label for="Status">Status</label>
-                        {{ form.Status }}
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="Status">Status</label>
+                            {{ form.Status }}
+                        </div>
+                        <div class="col-md-4">
+                            <label for="Date">Date</label>
+                            {{ form.Date }}
+                        </div>
+                        <div class="col-md-4">
+                            <label for="Category">Category</label>
+                            {{ form.Category }}
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-primary mb-4">Update Announcement</button>
                 </form>

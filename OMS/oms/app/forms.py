@@ -17,6 +17,14 @@ ROLE_OPTION = [
     ('Coordinator', 'Coordinator'),
 ]
 
+CATEGGORY_SELECTION = [
+    ('', '--- Select Category ---'),
+    ('What', 'What'),
+    ('When', 'When'),
+    ('Where', 'Where'),
+    ('Who', 'Who'),
+]
+
 class CustomUserCreationForm(UserCreationForm):
 
     position = position = forms.ChoiceField(
@@ -61,13 +69,19 @@ class AnnouncementForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-control'})
     )
 
+    Category = forms.ChoiceField(
+        choices=CATEGGORY_SELECTION,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
     class Meta:
         model = Announcement
-        fields = ['Title', 'Image', 'Description', 'Status']
+        fields = ['Title', 'Image', 'Category', 'Date', 'Description', 'Status']
         widgets = {
             'Title': forms.TextInput(attrs={'class': 'form-control'}),
             'Description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'Image': CustomClearableFileInput,
+            'Date': forms.DateInput(format='%Y-%m-%d', attrs={'class': 'form-control', 'type': 'date'}),
         }
 
         def __init__(self, *args, **kwargs):

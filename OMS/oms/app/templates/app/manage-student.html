@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/main-dashboard.css' %}">
+    <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon"> 
     <title>Admin - OJT Management System Dashboard</title>
     <style>
         .upload-box {
@@ -150,11 +151,11 @@
                                         <a href="{% url 'viewTimeLogs' student.id %}" class="btn btn-secondary"><i class="fas fa-eye"></i></a>
                                         <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#passwordModal{{student.StudentID}}"><i class="fa fa-archive"></i></button>     
                                         <!-- Password Modal -->
-                                        <div id="passwordModal{{student.StudentID}}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="passwordModalLabel" aria-hidden="true">
+                                        <div id="passwordModal{{student.StudentID}}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="passwordModalLabel{{student.StudentID}}" aria-hidden="true">
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title">Enter Admin Credentials</h5>
+                                                        <h5 class="modal-title" id="passwordModalLabel{{student.StudentID}}">Enter Admin Credentials</h5>
                                                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
@@ -165,7 +166,7 @@
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-primary" onclick="validatePassword({{ student.StudentID }})">Validate Password</button>
+                                                        <button type="button" class="btn btn-primary" onclick="validatePassword('{{ student.StudentID }}')">Validate Password</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -175,7 +176,8 @@
                                 {% endfor %}
                             </tbody>
                         </table>
-                    </div>                    
+                    </div>
+                                       
                     <div class="tab-pane fade" id="pending-application" role="tabpanel" aria-labelledby="pending-application-tab">
                         <table class="table">
                             <thead>
@@ -329,6 +331,8 @@
     {% comment %}  {% endcomment %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     {% comment %}  {% endcomment %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
     <script src="{% static 'js/index.js' %}"></script>
     <script>
         const csrfToken = "{{ csrf_token }}";
@@ -384,25 +388,31 @@
 
         // Admin Modal Password
         function validatePassword(studentId) {
-            var inputPassword = document.getElementById('adminPassword' + studentId).value;
+            var inputPasswordElement = document.getElementById('adminPassword' + studentId);
+            if (inputPasswordElement === null) {
+                console.error('Cannot find element with ID:', 'adminPassword' + studentId);
+                return;
+            }
+
+            var inputPassword = inputPasswordElement.value;
             if (!inputPassword) {
                 alert('Please enter the admin password.');
                 return;
             }
 
             fetch("/adminSite/get_admin_password_hash/")
-            .then(response => response.json())
-            .then(data => {
-                const hashedPassword = data.password;
-                const inputPasswordHash = sha256(inputPassword);
+                .then(response => response.json())
+                .then(data => {
+                    const hashedPassword = data.password;
+                    const inputPasswordHash = CryptoJS.SHA256(inputPassword).toString();
 
-                if (hashedPassword === inputPasswordHash) {
-                    archiveStudent(studentId);
-                } else {
-                    alert('Incorrect password');
-                }
-            })
-            .catch(error => console.error('Error:', error));
+                    if (hashedPassword === inputPasswordHash) {
+                        archiveStudent(studentId);
+                    } else {
+                        alert('Incorrect password');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
         }
 
         function archiveStudent(studentId) {
@@ -427,7 +437,7 @@
                 }
             })
             .catch(error => console.error('Error:', error));
-        }      
+        }
     </script>
 </body>
 </html>

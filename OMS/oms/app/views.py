@@ -173,6 +173,25 @@ def user_login(request):
             messages.error(request, 'Invalid username or password.')
     return render(request, 'app/base.html')
 
+@login_required
+@require_POST
+@csrf_exempt  # Note: This is for demonstration; ensure CSRF is properly handled in production.
+def archivedStudent(request, studentID):
+    studentID = request.POST.get('studentID')
+    student = get_object_or_404(Tablestudents, pk=studentID)
+    student.archived = True
+    student.save()
+    return JsonResponse(
+        {
+            'status': 'success', 
+            'message': f'{student.Firstname} {student.Lastname} has been archived.'
+        }
+    )
+
+@login_required
+def get_admin_password_hash(request):
+    return JsonResponse({'password': request.user.password})
+
 def approve_student(request, id):
     student = Tablestudents.objects.get(id=id)
     student.status = 'approved'
@@ -389,20 +408,6 @@ def editStudentDetails(request, studentID):
         'firstName': firstName,
         'lastName': lastName,
     })
-
-@login_required
-@require_POST
-def archivedStudent(request, studentID):
-    studentID = request.POST.get('studentID')
-    student = get_object_or_404(Tablestudents, pk=studentID)
-    student.archivedStudents = 'archive'
-    student.save()
-    return JsonResponse(
-        {
-            'status': 'success', 
-            'message': f'{student.Firstname} {student.Lastname} has been archived.'
-        }
-    )
 
 @login_required
 def get_admin_password_hash(request):

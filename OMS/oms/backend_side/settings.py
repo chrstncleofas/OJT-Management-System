@@ -1,7 +1,6 @@
-from decouple import config, Csv
-from pathlib import Path
-from decouple import config
 import os
+from pathlib import Path
+from decouple import config, Csv
 
 if os.path.exists('.env'):
     from dotenv import load_dotenv
