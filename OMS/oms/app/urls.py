@@ -22,8 +22,10 @@ urlpatterns = [
     path('approve_student/<int:id>/', views.approve_student, name='approve_student'),
     path('reject_students/<int:id>/', views.reject_students, name='reject_students'),
     # 
-    path('archivedStudent/<int:studentID>/', views.archivedStudent, name='archivedStudent'),
+    path('archivedStudent/<int:id>/', views.archivedStudent, name='archivedStudent'),
     path('get_admin_password_hash/', views.get_admin_password_hash, name='get_admin_password_hash'),
+    path('validate_admin_password/', views.validate_admin_password, name='validate_admin_password'),
+    
     path('unArchivedStudent/<int:id>/', views.unArchivedStudent, name='unArchivedStudent'),
     # 
     path('getAllPendingRegister', views.getAllPendingRegister, name='getAllPendingRegister'),

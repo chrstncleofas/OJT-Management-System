@@ -1,6 +1,6 @@
 from django import forms
 from app.models import CustomUser
-from students.models import Tablestudents, TimeLog
+from students.models import DataTableStudents, TimeLog
 from students.custom_widgets import CustomClearableFileInput
 
 COURSE_CHOICES = [
@@ -89,7 +89,7 @@ class StudentRegistrationForm(forms.ModelForm):
     )
 
     class Meta:
-        model = Tablestudents
+        model = DataTableStudents
         fields = ['StudentID', 'Firstname', 'Middlename', 'Lastname', 'Prefix', 'Address', 'Number' ,'Course', 'Year']
         widgets = {
             'Firstname': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter First Name'}),
@@ -109,7 +109,7 @@ class StudentRegistrationForm(forms.ModelForm):
 
 class StudentProfileForm(forms.ModelForm):
     class Meta:
-        model = Tablestudents
+        model = DataTableStudents
         fields = ['Firstname', 'Lastname', 'Email', 'Course', 'Year', 'Image']
         widgets = {
             'Firstname': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter First Name'}),
@@ -154,7 +154,7 @@ class TimeLogForm(forms.ModelForm):
 
 class EditStudentForm(forms.ModelForm):
     class Meta:
-        model = Tablestudents
+        model = DataTableStudents
         fields = ['Firstname', 'Middlename', 'Lastname', 'Email', 'Course', 'Year', 'status']
         widgets = {
             'Firstname': forms.TextInput(attrs={'class': 'form-control'}),

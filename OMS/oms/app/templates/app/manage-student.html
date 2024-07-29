@@ -149,24 +149,24 @@
                                     <td>
                                         <a href="{% url 'editStudentDetails' student.id %}" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i></a>
                                         <a href="{% url 'viewTimeLogs' student.id %}" class="btn btn-secondary"><i class="fas fa-eye"></i></a>
-                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#passwordModal{{student.StudentID}}"><i class="fa fa-archive"></i></button>     
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#passwordModal{{student.id}}"><i class="fa fa-archive"></i></button>     
                                         <!-- Password Modal -->
-                                        <div id="passwordModal{{student.StudentID}}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="passwordModalLabel{{student.StudentID}}" aria-hidden="true">
+                                        <div id="passwordModal{{student.id}}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="passwordModalLabel{{student.id}}" aria-hidden="true">
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title" id="passwordModalLabel{{student.StudentID}}">Enter Admin Credentials</h5>
+                                                        <h5 class="modal-title" id="passwordModalLabel{{student.id}}">Enter password</h5>
                                                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <input type="hidden" id="studentId{{student.StudentID}}" value="{{ student.StudentID }}">
-                                                        <input type="password" id="adminPassword{{student.StudentID}}" class="form-control" placeholder="Admin Password">
+                                                        <input type="hidden" id="studentId{{student.id}}" value="{{ student.id }}">
+                                                        <input type="password" id="adminPassword{{student.id}}" class="form-control" placeholder="Admin Password">
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-primary" onclick="validatePassword('{{ student.StudentID }}')">Validate Password</button>
+                                                        <button type="button" class="btn btn-primary" onclick="validatePassword('{{ student.id }}')">Validate Password</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -337,32 +337,6 @@
     <script src="{% static 'js/adminModal.js' %}"></script>
     {% comment %}  {% endcomment %}
     <script>
-        const csrfToken = "{{ csrf_token }}";
-        $(".navbar-toggler").click(function (e) {
-            e.preventDefault();
-            $("#wrapper").toggleClass("toggled");
-        });
-        document.getElementById('id_image').addEventListener('change', function () {
-            if (this.files && this.files[0]) {
-                document.getElementById('timeInBtn').disabled = false;
-                document.getElementById('timeOutBtn').disabled = false;
-            }
-        });
-        // 
-        function previewImage(event) {
-            var preview = document.getElementById('preview');
-            var file = document.getElementById('id_image').files[0];
-            var reader = new FileReader();
-            reader.onload = function () {
-                preview.src = reader.result;
-                preview.style.display = 'block';
-            }
-            if (file) {
-                reader.readAsDataURL(file);
-            }
-        }
-        document.getElementById('id_image').addEventListener('change', previewImage);
-        // 
         function submitRejection(studentId) {
             const reason = document.getElementById(`rejectReason${studentId}`).value;
             if (reason.trim() === "") {

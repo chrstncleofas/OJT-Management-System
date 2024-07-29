@@ -9,10 +9,11 @@ from students.forms import EditStudentForm
 from .forms import CustomPasswordChangeForm
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
-from students.models import Tablestudents, TimeLog
+from students.models import DataTableStudents, TimeLog
 from django.http import HttpResponse, JsonResponse
 from django.template.loader import render_to_string
 from app.models import CustomUser, Announcement
+from django.contrib.auth.hashers import check_password
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from app.forms import EditProfileForm, AnnouncementForm
@@ -43,13 +44,13 @@ def mainDashboard(request):
     firstName = admin.first_name
     lastName = admin.last_name
     # Approve
-    approve = Tablestudents.objects.filter(status='approved')
+    approve = DataTableStudents.objects.filter(status='Approved', archivedStudents='NotArchive')
     approve_count = approve.count()
     # Pending
-    pending = Tablestudents.objects.filter(status='pending')
+    pending = DataTableStudents.objects.filter(status='Pending')
     pending_count = pending.count()
     # Rejected
-    reject = Tablestudents.objects.filter(status='rejected')
+    reject = DataTableStudents.objects.filter(status='Rejected')
     reject_count = reject.count()
 
     return render(
@@ -112,7 +113,7 @@ def getAllPendingRegister(request):
     firstName = admin.first_name
     lastName = admin.last_name
     # 
-    students = Tablestudents.objects.filter(is_approved=False)
+    students = DataTableStudents.objects.filter(is_approved=False)
     return render(request, MANAGEMENT_STUDENT, {
         'getAllPendingRegister': students,
         'firstName': firstName,
@@ -126,11 +127,11 @@ def studentManagement(request):
     firstName = admin.first_name
     lastName = admin.last_name
     # 
-    approved = Tablestudents.objects.filter(status='approved')
-    pending = Tablestudents.objects.filter(status='pending')
-    rejected = Tablestudents.objects.filter(status='rejected')
+    approved = DataTableStudents.objects.filter(status='Approved', archivedStudents='NotArchive')
+    pending = DataTableStudents.objects.filter(status='Pending')
+    rejected = DataTableStudents.objects.filter(status='Rejected')
     # 
-    archive = Tablestudents.objects.filter(archivedStudents='archive')
+    archive = DataTableStudents.objects.filter(archivedStudents='Archive')
 
     return render(
         request,
@@ -146,13 +147,13 @@ def studentManagement(request):
     )
 
 def getListOfApproveStudent(request):
-    students = Tablestudents.objects.filter(is_approved=True)
+    students = DataTableStudents.objects.filter(is_approved=True)
     return render(request, MANAGEMENT_STUDENT, {
         'getListOfApproveStudent': students,
     })
 
 def getListOfArchivedStudents(request):
-    students = Tablestudents.objects.filter(archivedStudents='archive')
+    students = DataTableStudents.objects.filter(archivedStudents='Archive')
     return render(request, MANAGEMENT_STUDENT, {
         'getListOfArchivedStudents': students,
     })
@@ -175,26 +176,37 @@ def user_login(request):
 
 @login_required
 @require_POST
-@csrf_exempt  # Note: This is for demonstration; ensure CSRF is properly handled in production.
-def archivedStudent(request, studentID):
-    studentID = request.POST.get('studentID')
-    student = get_object_or_404(Tablestudents, pk=studentID)
-    student.archived = True
-    student.save()
-    return JsonResponse(
-        {
-            'status': 'success', 
-            'message': f'{student.Firstname} {student.Lastname} has been archived.'
-        }
-    )
+@csrf_exempt
+def archivedStudent(request, id):
+    try:
+        student = DataTableStudents.objects.get(pk=id)
+        student.archivedStudents = 'Archive'
+        student.save()
+        return JsonResponse({'status': 'success', 'message': f'{student.Firstname} {student.Lastname} has been archived.'})
+    except DataTableStudents.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Student not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 @login_required
 def get_admin_password_hash(request):
     return JsonResponse({'password': request.user.password})
 
+@login_required
+@require_POST
+@csrf_exempt  # Ensure CSRF is properly handled in production
+def validate_admin_password(request):
+    input_password = json.loads(request.body).get('password')
+    user = request.user
+
+    if user.check_password(input_password):
+        return JsonResponse({'status': 'success'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Incorrect password'})
+
 def approve_student(request, id):
-    student = Tablestudents.objects.get(id=id)
-    student.status = 'approved'
+    student = DataTableStudents.objects.get(id=id)
+    student.status = 'Approved'
     student.save()
 
     # Send approval email
@@ -212,10 +224,10 @@ def approve_student(request, id):
 @csrf_exempt
 def reject_students(request, id):
     if request.method == 'POST':
-        student = Tablestudents.objects.get(id=id)
+        student = DataTableStudents.objects.get(id=id)
         data = json.loads(request.body)
         reason = data.get('reason', 'No reason provided')
-        student.status = 'rejected'
+        student.status = 'Rejected'
         student.save()
 
         # Send email notification
@@ -232,8 +244,8 @@ def reject_students(request, id):
     return JsonResponse({'status': 'failed'}, status=400)
 
 def unArchivedStudent(request, id):
-    student = Tablestudents.objects.get(id=id)
-    student.archivedStudents = 'unarchive'
+    student = DataTableStudents.objects.get(id=id)
+    student.archivedStudents = 'UnArchive'
     student.save()
     messages.success(request, f'{student.Firstname} {student.Lastname} has been remove to archived.')
     return redirect(reverse('studentManagement'))
@@ -249,7 +261,7 @@ def is_admin(user):
 
 @user_passes_test(is_admin)
 def timeSheet(request):
-    students = Tablestudents.objects.all()
+    students = DataTableStudents.objects.all()
     user = request.user
     admin = get_object_or_404(CustomUser, id=user.id)
     firstName = admin.first_name
@@ -265,14 +277,14 @@ def timeSheet(request):
     )
 
 def viewTimeLogs(request, student_id):
-    student = get_object_or_404(Tablestudents, id=student_id)
+    student = get_object_or_404(DataTableStudents, id=student_id)
     firstName = student.Firstname
     lastName = student.Lastname
     time_logs = []
     total_hours = 0
     required_hours = 600
 
-    selected_student = get_object_or_404(Tablestudents, id=student_id)
+    selected_student = get_object_or_404(DataTableStudents, id=student_id)
     time_logs = TimeLog.objects.filter(student=selected_student).order_by('timestamp')
 
     total_work_seconds = 0
@@ -316,8 +328,8 @@ def viewStudentInformation(request, student_id):
     firstName = admin.first_name
     lastName = admin.last_name
     try:
-        student = Tablestudents.objects.get(pk=student_id)
-    except Tablestudents.DoesNotExist:
+        student = DataTableStudents.objects.get(pk=student_id)
+    except DataTableStudents.DoesNotExist:
         return HttpResponse('Student not found', status=404)
     return render(
         request, 'app/student-view-page.html', 
@@ -386,7 +398,7 @@ def editAnnouncement(request, id):
     })
 
 def editStudentDetails(request, studentID):
-    student = get_object_or_404(Tablestudents, pk=studentID)
+    student = get_object_or_404(DataTableStudents, pk=studentID)
     user = request.user
     # 
     admin = get_object_or_404(CustomUser, id=user.id)

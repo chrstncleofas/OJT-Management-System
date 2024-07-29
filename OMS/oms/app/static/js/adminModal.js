@@ -1,3 +1,18 @@
+// Function to preview image
+const csrfToken = "{{ csrf_token }}";
+function previewImage(event) {
+    var preview = document.getElementById('preview');
+    var file = document.getElementById('id_image').files[0];
+    var reader = new FileReader();
+    reader.onload = function () {
+        preview.src = reader.result;
+        preview.style.display = 'block';
+    }
+    if (file) {
+        reader.readAsDataURL(file);
+    }
+}
+
 function validatePassword(studentId) {
     var inputPasswordElement = document.getElementById('adminPassword' + studentId);
     if (inputPasswordElement === null) {
@@ -11,32 +26,35 @@ function validatePassword(studentId) {
         return;
     }
 
-    fetch("/adminSite/get_admin_password_hash/")
-        .then(response => response.json())
-        .then(data => {
-            const hashedPassword = data.password;
-            const inputPasswordHash = CryptoJS.SHA256(inputPassword).toString();
-
-            if (hashedPassword === inputPasswordHash) {
-                archiveStudent(studentId);
-            } else {
-                alert('Incorrect password');
-            }
-        })
-        .catch(error => console.error('Error:', error));
+    fetch("/adminSite/validate_admin_password/", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({ password: inputPassword })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            archiveStudent(studentId);
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
 }
 
 function archiveStudent(studentId) {
     const url = `/adminSite/archivedStudent/${studentId}/`;
+
     fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': '{{ csrf_token }}'
+            'X-CSRFToken': csrfToken
         },
-        body: JSON.stringify({
-            studentID: studentId
-        })
+        body: JSON.stringify({ studentID: studentId })
     })
     .then(response => response.json())
     .then(data => {
@@ -49,3 +67,13 @@ function archiveStudent(studentId) {
     })
     .catch(error => console.error('Error:', error));
 }
+
+
+// Event listener for image preview
+document.getElementById('id_image').addEventListener('change', previewImage);
+
+// Event listener for navbar toggler
+$(".navbar-toggler").click(function (e) {
+    e.preventDefault();
+    $("#wrapper").toggleClass("toggled");
+});
