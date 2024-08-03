@@ -9,13 +9,13 @@ from students.forms import EditStudentForm
 from .forms import CustomPasswordChangeForm
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
-from students.models import DataTableStudents, TimeLog
+from app.models import CustomUser, Announcement
 from django.http import HttpResponse, JsonResponse
 from django.template.loader import render_to_string
-from app.models import CustomUser, Announcement
-from django.contrib.auth.hashers import check_password
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from django.contrib.auth.hashers import check_password
+from students.models import DataTableStudents, TimeLog
 from app.forms import EditProfileForm, AnnouncementForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -261,7 +261,7 @@ def is_admin(user):
 
 @user_passes_test(is_admin)
 def timeSheet(request):
-    students = DataTableStudents.objects.all()
+    students = DataTableStudents.objects.filter(status='Approved', archivedStudents='NotArchive')
     user = request.user
     admin = get_object_or_404(CustomUser, id=user.id)
     firstName = admin.first_name
@@ -275,6 +275,24 @@ def timeSheet(request):
             'lastName': lastName
         }
     )
+
+def viewPendingApplication(request, id):
+    students = get_object_or_404(DataTableStudents, id=id)
+    user = request.user
+    admin = get_object_or_404(CustomUser, id=user.id)
+    firstName = admin.first_name
+    lastName = admin.last_name
+    return render(
+        request,
+        'app/pending-view-page.html',
+        {
+            'students': students,
+            'firstName': firstName,
+            'lastName': lastName
+        }
+    )
+
+
 
 def viewTimeLogs(request, student_id):
     student = get_object_or_404(DataTableStudents, id=student_id)

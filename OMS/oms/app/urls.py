@@ -28,6 +28,7 @@ urlpatterns = [
     
     path('unArchivedStudent/<int:id>/', views.unArchivedStudent, name='unArchivedStudent'),
     # 
+    path('viewPendingApplication/<int:id>/', views.viewPendingApplication, name='viewPendingApplication'),
     path('getAllPendingRegister', views.getAllPendingRegister, name='getAllPendingRegister'),
     path('getListOfApproveStudent', views.getListOfApproveStudent, name='getListOfApproveStudent'),
     path('getListOfArchivedStudents', views.getListOfArchivedStudents, name='getListOfArchivedStudents'),

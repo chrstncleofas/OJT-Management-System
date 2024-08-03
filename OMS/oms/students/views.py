@@ -2,9 +2,9 @@ from django.urls import reverse
 from django.conf import settings
 from django.utils import timezone
 from django.contrib import messages
+from app.models import Announcement
 from django.utils.timezone import now
 from django.core.mail import send_mail
-from app.models import Announcement
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from students.models import DataTableStudents, TimeLog
@@ -191,7 +191,7 @@ def studentRegister(request):
             recipient_list = [student.Email]
             send_mail(subject, message, settings.EMAIL_HOST_USER, recipient_list, fail_silently=False)
 
-            messages.success(request, 'Registration successful. Waiting for admin approval.')
+            messages.success(request, "Registration successful, Your account is pending approval by an admin, Please wait for admin's approve your account...")
             return redirect('students:success')
         else:
             for field, errors in user_form.errors.items():
@@ -220,7 +220,7 @@ def studentLogin(request):
                 elif student.status == 'rejected':
                     messages.error(request, 'Your account has been rejected. Please contact the admin for further details.')
                     return render(request, 'students/login.html')
-                elif student.archivedStudents == 'archive':
+                elif student.archivedStudents == 'Archive':
                     messages.error(request, 'Your account has been lock due to inactivity level. Please contact your admin.')
                     return render(request, 'students/login.html')
                 else:
