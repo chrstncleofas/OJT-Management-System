@@ -17,7 +17,7 @@ urlpatterns = [
     path('changePass', views.changePass, name='changePass'),
     path('mainDashboard', views.mainDashboard, name='mainDashboard'),
     path('studentManagement', views.studentManagement, name='studentManagement'),
-    path('editStudentDetails/<int:studentID>/', views.editStudentDetails, name='editStudentDetails'),
+    path('editStudentDetails/<int:id>/', views.editStudentDetails, name='editStudentDetails'),
     # 
     path('approve_student/<int:id>/', views.approve_student, name='approve_student'),
     path('reject_students/<int:id>/', views.reject_students, name='reject_students'),
@@ -29,6 +29,7 @@ urlpatterns = [
     path('unArchivedStudent/<int:id>/', views.unArchivedStudent, name='unArchivedStudent'),
     # 
     path('viewPendingApplication/<int:id>/', views.viewPendingApplication, name='viewPendingApplication'),
+    path('setSchedule/<int:id>/', views.setSchedule, name='setSchedule'),
     path('getAllPendingRegister', views.getAllPendingRegister, name='getAllPendingRegister'),
     path('getListOfApproveStudent', views.getListOfApproveStudent, name='getListOfApproveStudent'),
     path('getListOfArchivedStudents', views.getListOfArchivedStudents, name='getListOfArchivedStudents'),

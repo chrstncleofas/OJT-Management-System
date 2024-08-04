@@ -91,6 +91,7 @@
         .flex p{
             margin-top: 5px;
         }
+        
     </style>
 </head>
 <body>
@@ -140,52 +141,69 @@
                 </div>
             </nav>
             <!-- Card -->
-            <div class="container-fluid mt-3 card-container">
-                <div class="card col-md-6" style="margin-right: 0px;">
-                    <div class="mt-2">
-                        <form method="POST" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <div class="upload-box" id="uploadBox">
-                                {{ form.image }}
-                                <img id="preview" src="#" alt="Preview Image">
-                            </div>
-                            {{ form.action }}
-                            {% if time_logs %}
-                                {% if time_logs.0.action == 'IN' %}
-                                    <p style="margin-bottom: 2px;">Current login time was</p>
-                                    <p class="time-info" style="margin-bottom: 2px; font-weight: bold;">{{ time_logs.0.timestamp|date:"g:i:s A" }}</p>
-                                    <p>on <span style="font-weight: bold;">{{ time_logs.0.timestamp|date:"l, n/j" }}</span></p>
-                                {% else %}
-                                    <p style="margin-bottom: 2px;">Current logging out at</p>
-                                    <p style="margin-bottom: 2px; font-weight: bold;" class="time-info">{{ current_time|date:"g:i:s A" }}</p>
-                                    <p>on <span style="font-weight: bold;">{{ current_time|date:"l, n/j" }}</span></p>
-                                {% endif %}
-                            {% endif %}
-                            <div class="form-group" style="display: flex; justify-content: space-between;">
-                                <button type="submit" id="timeInBtn" class="btn btn-success" onclick="document.getElementById('id_action').value='IN'" disabled>Time In</button>
-                                <button type="submit" id="timeOutBtn" class="btn btn-danger" onclick="document.getElementById('id_action').value='OUT'" disabled>Time Out</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="card fixed-height col-md-5">
-                    <h3>Time Card</h3>
-                    <div class="row">
-                        {% for log in time_logs %}
-                            <div class="col-md-12 log-card">
-                                <div class="card">
-                                    {% if log.image %}
-                                        <img src="{{ log.image.url }}" alt="Time {{ log.action }} Image" class="card-img-top">
+            <div class="container mt-3">
+                <div class="row p-3">
+                    <div class="card col-md-3">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">Next Schedule</h5>
+                        </div>
+                        {% if next_schedule %}
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>{{ next_schedule.day }}</span>
+                                    <span class="text-muted">{{ next_schedule.start_time }} - {{ next_schedule.end_time }}</span>
+                                </li>
+                            </ul>
+                        {% else %}
+                            <p class="text-center text-muted">No schedule available.</p>
+                        {% endif %}                      
+                    </div>                    
+                    <div class="card col-md-5 ml-2">
+                        <div class="mt-2">
+                            <form method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="upload-box" id="uploadBox">
+                                    {{ form.image }}
+                                    <img id="preview" src="#" alt="Preview Image">
+                                </div>
+                                {{ form.action }}
+                                {% if time_logs %}
+                                    {% if time_logs.0.action == 'IN' %}
+                                        <p style="margin-bottom: 2px;">Current login time was</p>
+                                        <p class="time-info" style="margin-bottom: 2px; font-weight: bold;">{{ time_logs.0.timestamp|date:"g:i:s A" }}</p>
+                                        <p>on <span style="font-weight: bold;">{{ time_logs.0.timestamp|date:"l, n/j" }}</span></p>
                                     {% else %}
-                                        <img src="{% static 'path/to/default-image.jpg' %}" alt="No Image" class="card-img-top">
+                                        <p style="margin-bottom: 2px;">Current logging out at</p>
+                                        <p style="margin-bottom: 2px; font-weight: bold;" class="time-info">{{ current_time|date:"g:i:s A" }}</p>
+                                        <p>on <span style="font-weight: bold;">{{ current_time|date:"l, n/j" }}</span></p>
                                     {% endif %}
-                                    <div class="card-body flex">
-                                        <h5 class="actionClass">{{ log.action }}: <span style="font-weight: 400; font-size: 15px;">{{ log.timestamp|date:"g:i:s A" }}</span></h5>
-                                        <p class="dateClass">{{ log.timestamp|date:"F j, Y" }}, <span>{{ log.timestamp|date:"l" }}</span></p>
+                                {% endif %}
+                                <div class="form-group" style="display: flex; justify-content: space-between;">
+                                    <button type="submit" id="timeInBtn" class="btn btn-success" onclick="document.getElementById('id_action').value='IN'" disabled>Time In</button>
+                                    <button type="submit" id="timeOutBtn" class="btn btn-danger" onclick="document.getElementById('id_action').value='OUT'" disabled>Time Out</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card fixed-height col-md-6 ml-2">
+                        <h3>Time Card</h3>
+                        <div class="row">
+                            {% for log in time_logs %}
+                                <div class="col-md-12 log-card">
+                                    <div class="card">
+                                        {% if log.image %}
+                                            <img src="{{ log.image.url }}" alt="Time {{ log.action }} Image" class="card-img-top">
+                                        {% else %}
+                                            <img src="{% static 'path/to/default-image.jpg' %}" alt="No Image" class="card-img-top">
+                                        {% endif %}
+                                        <div class="card-body flex">
+                                            <h5 class="actionClass">{{ log.action }}: <span style="font-weight: 400; font-size: 15px;">{{ log.timestamp|date:"g:i:s A" }}</span></h5>
+                                            <p class="dateClass">{{ log.timestamp|date:"F j, Y" }}, <span>{{ log.timestamp|date:"l" }}</span></p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        {% endfor %}
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>

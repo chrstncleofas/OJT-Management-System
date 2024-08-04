@@ -7,7 +7,6 @@ from app.models import CustomUser, Announcement
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
 
-
 class AnnouncementAdmin(admin.ModelAdmin):
     form = AnnouncementForm
     list_display = ('Title', 'Date', 'Status', 'Category')
@@ -18,7 +17,6 @@ class AnnouncementAdmin(admin.ModelAdmin):
         if db_field.name == 'Date':
             kwargs['widget'] = forms.DateInput(format='%Y-%m-%d', attrs={'class': 'form-control', 'type': 'date'})
         return super().formfield_for_dbfield(db_field, request, **kwargs)
-
-
+    
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Announcement, AnnouncementAdmin)

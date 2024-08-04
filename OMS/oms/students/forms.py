@@ -1,6 +1,6 @@
 from django import forms
 from app.models import CustomUser
-from students.models import DataTableStudents, TimeLog
+from students.models import DataTableStudents, TimeLog, Schedule
 from students.custom_widgets import CustomClearableFileInput
 
 COURSE_CHOICES = [
@@ -165,3 +165,12 @@ class EditStudentForm(forms.ModelForm):
             'Year': forms.NumberInput(attrs={'class': 'form-control'}),
             'status': forms.Select(attrs={'class': 'form-control'}),
         }
+
+
+class ScheduleSettingForm(forms.Form):
+    day = forms.ChoiceField(
+        choices=[('Monday', 'Monday'), ('Tuesday', 'Tuesday'), ('Wednesday', 'Wednesday'), ('Thursday', 'Thursday'), ('Friday', 'Friday')],
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    start_time = forms.TimeField(widget=forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}))
+    end_time = forms.TimeField(widget=forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}))

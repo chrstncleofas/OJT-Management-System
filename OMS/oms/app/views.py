@@ -1,11 +1,11 @@
 import json
 from typing import Union
-from datetime import timedelta
 from django.urls import reverse
 from django.conf import settings
 from django.contrib import messages
+from datetime import datetime, timedelta
 from django.core.mail import send_mail
-from students.forms import EditStudentForm
+from students.forms import EditStudentForm, ScheduleSettingForm
 from .forms import CustomPasswordChangeForm
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
@@ -15,11 +15,12 @@ from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib.auth.hashers import check_password
-from students.models import DataTableStudents, TimeLog
+from students.models import DataTableStudents, TimeLog, Schedule
 from app.forms import EditProfileForm, AnnouncementForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
+from django.forms import inlineformset_factory
 from django.contrib.auth.decorators import user_passes_test
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
 
@@ -293,7 +294,6 @@ def viewPendingApplication(request, id):
     )
 
 
-
 def viewTimeLogs(request, student_id):
     student = get_object_or_404(DataTableStudents, id=student_id)
     firstName = student.Firstname
@@ -415,8 +415,52 @@ def editAnnouncement(request, id):
         'announcement': announcement,
     })
 
-def editStudentDetails(request, studentID):
-    student = get_object_or_404(DataTableStudents, pk=studentID)
+def setSchedule(request, id):
+    user = request.user
+    admin = get_object_or_404(CustomUser, id=user.id)
+    firstName = admin.first_name
+    lastName = admin.last_name
+
+    student = get_object_or_404(DataTableStudents, id=id)
+    current_day = datetime.now().strftime('%A')
+    
+    if request.method == 'POST':
+        form = ScheduleSettingForm(request.POST)
+        if form.is_valid():
+            day = form.cleaned_data['day']
+            start_time = form.cleaned_data['start_time']
+            end_time = form.cleaned_data['end_time']
+            
+            Schedule.objects.create(
+                student=student,
+                day=day,
+                start_time=start_time,
+                end_time=end_time
+            )
+            return redirect('editStudentDetails', id=id)
+    else:
+        form = ScheduleSettingForm()
+    
+    schedule = Schedule.objects.filter(student=student).order_by('day')
+    next_schedule = []
+    day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    
+    start_index = day_order.index(current_day)
+    for i in range(start_index + 1, len(day_order)):
+        next_schedule.extend(schedule.filter(day=day_order[i]))
+    for i in range(0, start_index + 1):
+        next_schedule.extend(schedule.filter(day=day_order[i]))
+
+    return render(request, 'app/set-schedule.html', {
+        'form': form,
+        'student': student,
+        'firstName': firstName,
+        'lastName': lastName,
+        'schedule': next_schedule,
+    })
+
+def editStudentDetails(request, id):
+    student = get_object_or_404(DataTableStudents, pk=id)
     user = request.user
     # 
     admin = get_object_or_404(CustomUser, id=user.id)
