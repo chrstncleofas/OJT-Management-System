@@ -13,7 +13,6 @@ from django.http import HttpResponse, JsonResponse
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django.contrib.auth.hashers import check_password
 from app.forms import EditProfileForm, AnnouncementForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -135,7 +134,7 @@ def studentManagement(request):
         }
     )
 
-def user_login(request):
+def userLoginFunction(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -166,13 +165,13 @@ def archivedStudent(request, id):
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 @login_required
-def get_admin_password_hash(request):
+def getAdminPasswordHash(request):
     return JsonResponse({'password': request.user.password})
 
 @login_required
 @require_POST
 @csrf_exempt  # Ensure CSRF is properly handled in production
-def validate_admin_password(request):
+def validateAdminPassword(request):
     input_password = json.loads(request.body).get('password')
     user = request.user
 
@@ -181,7 +180,7 @@ def validate_admin_password(request):
     else:
         return JsonResponse({'status': 'error', 'message': 'Incorrect password'})
 
-def approve_student(request, id):
+def approveStudent(request, id):
     student = DataTableStudents.objects.get(id=id)
     student.status = 'Approved'
     student.save()
@@ -199,7 +198,7 @@ def approve_student(request, id):
     return redirect(reverse('studentManagement'))
 
 @csrf_exempt
-def reject_students(request, id):
+def rejectStudent(request, id):
     if request.method == 'POST':
         student = DataTableStudents.objects.get(id=id)
         data = json.loads(request.body)
@@ -231,12 +230,12 @@ def logoutView(request) -> HttpResponseRedirect:
     logout(request)
     return redirect(home)
 
-def is_admin(user):
+def isAdmin(user):
     user_admin = user.is_superuser
     user_staff = user.is_staff
     return user_admin or user_staff
 
-@user_passes_test(is_admin)
+@user_passes_test(isAdmin)
 def timeSheet(request):
     students = DataTableStudents.objects.filter(status='Approved', archivedStudents='NotArchive')
     user = request.user
@@ -462,10 +461,6 @@ def editStudentDetails(request, id):
         'firstName': firstName,
         'lastName': lastName,
     })
-
-@login_required
-def get_admin_password_hash(request):
-    return JsonResponse({'password': request.user.password})
 
 def deleteAnnouncement(request, id):
     announcement = get_object_or_404(Announcement, id=id)

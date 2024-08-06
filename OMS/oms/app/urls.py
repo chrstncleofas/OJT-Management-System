@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('login', views.user_login, name='login'),
+    path('login', views.userLoginFunction, name='login'),
     path('profile', views.profile, name='profile'),
     path('logout', views.logoutView, name='logout'),
     path('dashboard', views.dashboard, name='dashboard'),
@@ -19,12 +19,12 @@ urlpatterns = [
     path('studentManagement', views.studentManagement, name='studentManagement'),
     path('editStudentDetails/<int:id>/', views.editStudentDetails, name='editStudentDetails'),
     # 
-    path('approve_student/<int:id>/', views.approve_student, name='approve_student'),
-    path('reject_students/<int:id>/', views.reject_students, name='reject_students'),
+    path('approve_student/<int:id>/', views.approveStudent, name='approve_student'),
+    path('reject_students/<int:id>/', views.rejectStudent, name='reject_students'),
     # 
     path('archivedStudent/<int:id>/', views.archivedStudent, name='archivedStudent'),
-    path('get_admin_password_hash/', views.get_admin_password_hash, name='get_admin_password_hash'),
-    path('validate_admin_password/', views.validate_admin_password, name='validate_admin_password'),
+    path('get_admin_password_hash/', views.getAdminPasswordHash, name='get_admin_password_hash'),
+    path('validate_admin_password/', views.validateAdminPassword, name='validate_admin_password'),
     
     path('unArchivedStudent/<int:id>/', views.unArchivedStudent, name='unArchivedStudent'),
     # 
