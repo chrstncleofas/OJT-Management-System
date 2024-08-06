@@ -5,7 +5,6 @@ from django.conf import settings
 from django.contrib import messages
 from datetime import datetime, timedelta
 from django.core.mail import send_mail
-from students.forms import EditStudentForm, ScheduleSettingForm
 from .forms import CustomPasswordChangeForm
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
@@ -15,13 +14,13 @@ from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib.auth.hashers import check_password
-from students.models import DataTableStudents, TimeLog, Schedule
 from app.forms import EditProfileForm, AnnouncementForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-from django.forms import inlineformset_factory
 from django.contrib.auth.decorators import user_passes_test
+from students.forms import EditStudentForm, ScheduleSettingForm
+from students.models import DataTableStudents, TimeLog, Schedule
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
 
 HOME_URL_PATH = 'app/base.html'
@@ -328,13 +327,17 @@ def viewTimeLogs(request, student_id):
 
     remaining_hours = required_hours - total_hours
 
+    # Fetching the entire weekly schedule for the student
+    full_schedule = Schedule.objects.filter(student=student, day__in=['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']).order_by('id')
+
     context = {
         'paired_logs': paired_logs,
         'total_hours': total_hours,
         'required_hours': required_hours,
         'remaining_hours': remaining_hours,
         'firstName': firstName,
-        'lastName': lastName
+        'lastName': lastName,
+        'full_schedule': full_schedule,
     }
 
     return render(request, 'app/TimeLogs.html', context)
