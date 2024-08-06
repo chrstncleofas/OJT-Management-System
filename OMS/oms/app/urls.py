@@ -30,9 +30,6 @@ urlpatterns = [
     # 
     path('viewPendingApplication/<int:id>/', views.viewPendingApplication, name='viewPendingApplication'),
     path('setSchedule/<int:id>/', views.setSchedule, name='setSchedule'),
-    path('getAllPendingRegister', views.getAllPendingRegister, name='getAllPendingRegister'),
-    path('getListOfApproveStudent', views.getListOfApproveStudent, name='getListOfApproveStudent'),
-    path('getListOfArchivedStudents', views.getListOfArchivedStudents, name='getListOfArchivedStudents'),
     # 
     path('announcement', views.announcement, name='announcement'),
     path('listOfAnnouncement', views.listOfAnnouncement, name='listOfAnnouncement'),

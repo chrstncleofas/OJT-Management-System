@@ -107,19 +107,6 @@ def changePass(request):
         'lastName': lastName
     })
 
-def getAllPendingRegister(request):
-    user = request.user
-    admin = get_object_or_404(CustomUser, id=user.id)
-    firstName = admin.first_name
-    lastName = admin.last_name
-    # 
-    students = DataTableStudents.objects.filter(is_approved=False)
-    return render(request, MANAGEMENT_STUDENT, {
-        'getAllPendingRegister': students,
-        'firstName': firstName,
-        'lastName': lastName
-    })
-
 def studentManagement(request):
     user = request.user
     admin = get_object_or_404(CustomUser, id=user.id)
@@ -128,7 +115,9 @@ def studentManagement(request):
     lastName = admin.last_name
     # 
     approved = DataTableStudents.objects.filter(status='Approved', archivedStudents='NotArchive')
+    # 
     pending = DataTableStudents.objects.filter(status='Pending')
+    # 
     rejected = DataTableStudents.objects.filter(status='Rejected')
     # 
     archive = DataTableStudents.objects.filter(archivedStudents='Archive')
@@ -145,18 +134,6 @@ def studentManagement(request):
             'lastName': lastName
         }
     )
-
-def getListOfApproveStudent(request):
-    students = DataTableStudents.objects.filter(is_approved=True)
-    return render(request, MANAGEMENT_STUDENT, {
-        'getListOfApproveStudent': students,
-    })
-
-def getListOfArchivedStudents(request):
-    students = DataTableStudents.objects.filter(archivedStudents='Archive')
-    return render(request, MANAGEMENT_STUDENT, {
-        'getListOfArchivedStudents': students,
-    })
 
 def user_login(request):
     if request.method == 'POST':
