@@ -3,17 +3,16 @@ from django.conf import settings
 from django.utils import timezone
 from django.contrib import messages
 from app.models import Announcement
-from django.utils.timezone import now
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
-from students.models import DataTableStudents, TimeLog, Schedule
 from django.template.loader import render_to_string
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth import authenticate, login, logout
+from students.models import DataTableStudents, TimeLog, Schedule
 from students.forms import StudentRegistrationForm, UserForm, ChangePasswordForm, TimeLogForm, StudentProfileForm
 
 def studentHome(request) -> HttpResponse:
@@ -21,7 +20,6 @@ def studentHome(request) -> HttpResponse:
 
 def studentDashboard(request) -> HttpResponse:
     return render(request, 'students/student-dashboard.html')
-
 
 @login_required
 def welcomeDashboard(request) -> HttpResponse:
