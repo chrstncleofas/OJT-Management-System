@@ -3,8 +3,8 @@ from typing import Union
 from django.urls import reverse
 from django.conf import settings
 from django.contrib import messages
-from datetime import datetime, timedelta
 from django.core.mail import send_mail
+from datetime import datetime, timedelta
 from .forms import CustomPasswordChangeForm
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404

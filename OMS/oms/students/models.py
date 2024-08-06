@@ -1,5 +1,5 @@
 from django.db import models
-from app.models import CustomUser
+from app.models import CustomUser, RenderingHoursTable
 
 class DataTableStudents(models.Model):
     STATUS_CHOICES = [
@@ -32,6 +32,13 @@ class DataTableStudents(models.Model):
 
     def __str__(self):
         return f"{self.Firstname} {self.Lastname}"
+    
+    def get_required_hours(self):
+        try:
+            course_requirement = RenderingHoursTable.objects.get(course=self.Course)
+            return course_requirement.required_hours
+        except RenderingHoursTable.DoesNotExist:
+            return None
 
 class TimeLog(models.Model):
     student = models.ForeignKey(DataTableStudents, on_delete=models.CASCADE)
