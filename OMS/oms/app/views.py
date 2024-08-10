@@ -275,7 +275,6 @@ def viewTimeLogs(request, student_id):
     selected_student = get_object_or_404(DataTableStudents, id=student_id)
     time_logs = TimeLog.objects.filter(student=selected_student).order_by('timestamp')
     total_work_seconds = 0
-    # daily_start = None
     daily_total = timedelta()
     paired_logs = []
     i = 0
