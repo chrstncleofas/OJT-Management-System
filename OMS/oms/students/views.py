@@ -76,10 +76,11 @@ def TimeInAndTimeOut(request):
     current_time = timezone.now()
     day_of_week = current_time.strftime('%A')
 
+    next_schedule = None  # Initialize next_schedule as None
+
     if request.method == 'POST':
         form = TimeLogForm(request.POST, request.FILES)
         if form.is_valid():
-            # Check for schedule
             try:
                 schedule = Schedule.objects.get(student=student, day=day_of_week)
             except Schedule.DoesNotExist:
@@ -91,12 +92,25 @@ def TimeInAndTimeOut(request):
             time_log.timestamp = timezone.now()
 
             if schedule:
-                # Optional: Set start and end time from schedule if needed
                 time_log.start_time = schedule.start_time
                 time_log.end_time = schedule.end_time
 
             time_log.save()
             messages.success(request, f'Time {time_log.action} recorded successfully with image.')
+
+            # Fetch next schedule after successful time in/out
+            if time_log.action == 'IN':  # Check if the action is 'IN'
+                schedules = Schedule.objects.filter(student=student).order_by('day')
+                days_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+                current_day_index = days_order.index(day_of_week)
+                for schedule in schedules:
+                    schedule_day_index = days_order.index(schedule.day)
+                    if schedule_day_index > current_day_index:
+                        next_schedule = schedule
+                        break
+                if not next_schedule and schedules.exists():
+                    next_schedule = schedules.first()
+
             return redirect('students:TimeInAndTimeOut')
         else:
             messages.error(request, 'Failed to record time. Please ensure the form is filled out correctly.')
@@ -107,21 +121,6 @@ def TimeInAndTimeOut(request):
     lastName = student.Lastname
     time_logs = TimeLog.objects.filter(student=student).order_by('-timestamp')
 
-    # Fetching schedules for the student
-    schedules = Schedule.objects.filter(student=student).order_by('day')
-
-    # Determine the next schedule
-    next_schedule = None
-    days_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-    current_day_index = days_order.index(day_of_week)
-    for schedule in schedules:
-        schedule_day_index = days_order.index(schedule.day)
-        if schedule_day_index > current_day_index:
-            next_schedule = schedule
-            break
-    if not next_schedule and schedules.exists():
-        next_schedule = schedules.first()  # If no next schedule, get the first available one
-
     return render(
         request,
         'students/timeIn-timeOut.html',
@@ -131,8 +130,7 @@ def TimeInAndTimeOut(request):
             'time_logs': time_logs,
             'current_time': current_time,
             'form': form,
-            'schedule': schedules,
-            'next_schedule': next_schedule,
+            'next_schedule': next_schedule,  # Pass next_schedule to the template
         }
     )
 

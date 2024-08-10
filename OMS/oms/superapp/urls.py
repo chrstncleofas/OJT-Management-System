@@ -9,6 +9,7 @@ urlpatterns = [
     path('', views.superHome, name='superHome'),
     path('editUserProfile/', views.editUserProfile, name='editUserProfile'),
     path('editUsers/<int:id>/', views.editUsers, name='editUsers'),
+    path('createUserAdmin', views.createUserAdmin, name='createUserAdmin'),
     path('superLogin', views.superAdminLogin, name='superLogin'),
     path('addUsers', views.addUsers, name='addUsers'),
     path('loggingOut/', views.loggingOut, name='loggingOut'),
