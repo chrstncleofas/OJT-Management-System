@@ -170,7 +170,7 @@ def getAdminPasswordHash(request):
 
 @login_required
 @require_POST
-@csrf_exempt  # Ensure CSRF is properly handled in production
+@csrf_exempt
 def validateAdminPassword(request):
     input_password = json.loads(request.body).get('password')
     user = request.user
@@ -184,8 +184,6 @@ def approveStudent(request, id):
     student = DataTableStudents.objects.get(id=id)
     student.status = 'Approved'
     student.save()
-
-    # Send approval email
     subject = 'Your OJT Management System Account Has Been Approved'
     message = render_to_string('app/approval_email.txt', {
         'first_name': student.Firstname,
@@ -205,8 +203,6 @@ def rejectStudent(request, id):
         reason = data.get('reason', 'No reason provided')
         student.status = 'Rejected'
         student.save()
-
-        # Send email notification
         subject = 'Account Rejected'
         message = render_to_string('app/rejection_email.txt', {
             'first_name': student.Firstname,
@@ -276,16 +272,12 @@ def viewTimeLogs(request, student_id):
     time_logs = []
     total_hours = 0
     required_hours = 600
-
     selected_student = get_object_or_404(DataTableStudents, id=student_id)
     time_logs = TimeLog.objects.filter(student=selected_student).order_by('timestamp')
-
     total_work_seconds = 0
-    daily_start = None
+    # daily_start = None
     daily_total = timedelta()
-
-    paired_logs = []  # List to hold the paired logs
-
+    paired_logs = []
     i = 0
     while i < len(time_logs):
         if time_logs[i].action == 'IN':
@@ -295,17 +287,12 @@ def viewTimeLogs(request, student_id):
                 if work_period > timedelta(hours=1):
                     work_period -= timedelta(hours=1)
                 daily_total += work_period
-                i += 1  # Skip the next log since it is already paired
+                i += 1
         i += 1
-
     total_work_seconds = daily_total.total_seconds()
     total_hours = total_work_seconds / 3600
-
     remaining_hours = required_hours - total_hours
-
-    # Fetching the entire weekly schedule for the student
     full_schedule = Schedule.objects.filter(student=student, day__in=['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']).order_by('id')
-
     context = {
         'paired_logs': paired_logs,
         'total_hours': total_hours,
