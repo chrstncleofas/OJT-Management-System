@@ -91,7 +91,21 @@
         .flex p{
             margin-top: 5px;
         }
+        .card .row.no-gutters {
+            display: flex;
+            align-items: stretch;
+        }
         
+        .card .col-md-4 {
+            flex: 1;
+            display: flex;
+            align-items: stretch;
+        }
+        
+        .card .card-img {
+            width: 100%;
+            height: 96%;
+        }
     </style>
 </head>
 <body>
@@ -191,22 +205,42 @@
                         <h3>Time Card</h3>
                         <div class="row">
                             {% for log in time_logs %}
-                                <div class="col-md-12 log-card">
-                                    <div class="card">
-                                        {% if log.image %}
-                                            <img src="{{ log.image.url }}" alt="Time {{ log.action }} Image" class="card-img-top">
-                                        {% else %}
-                                            <img src="{% static 'path/to/default-image.jpg' %}" alt="No Image" class="card-img-top">
-                                        {% endif %}
-                                        <div class="card-body flex">
-                                            <h5 class="actionClass">{{ log.action }}: <span style="font-weight: 400; font-size: 15px;">{{ log.timestamp|date:"g:i:s A" }}</span></h5>
-                                            <p class="dateClass">{{ log.timestamp|date:"F j, Y" }}, <span>{{ log.timestamp|date:"l" }}</span></p>
+                            <div class="col-md-12 log-card">
+                                <div class="card">
+                                    <div class="row no-gutters">
+                                        <div class="col-md-4">
+                                            {% if log.image %}
+                                            <img src="{{ log.image.url }}" alt="Time {{ log.action }} Image" class="card-img img-fluid">
+                                            {% else %}
+                                            <img src="{% static 'path/to/default-image.jpg' %}" alt="No Image" class="card-img img-fluid">
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="card-body text-left">
+                                                <div class="row">
+                                                    <div class="col-12 mb-1">
+                                                        <p class="card-text" style="font-weight: bold; font-size: 13px;">TIME {{ log.action }}</p>
+                                                    </div>
+                                                    <div class="col-12 mb-1">
+                                                        <p class="card-text">
+                                                            <span style="font-weight: 400; font-size: 15px;">{{ log.timestamp|date:"g:i:s A" }}</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-12 mb-1">
+                                                        <p class="card-text">{{ log.timestamp|date:"l" }}</p>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <p class="card-text">{{ log.timestamp|date:"F j, Y" }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
                             {% endfor %}
                         </div>
-                    </div>
+                    </div>               
                 </div>
             </div>
         </div>
