@@ -86,7 +86,7 @@
 <body>
     <div class="d-flex" id="wrapper">
         <!-- Sidebar -->
-        <div class="bg-light border-right" id="sidebar-wrapper">
+        <div class="bg-light border-right vh-100" id="sidebar-wrapper">
             <a href="{% url 'dashboard' %}" style="text-decoration: none !important; color: black !important;"><div class="sidebar-heading">OJT Management System</div></a>
             <div class="list-group list-group-flush">
                 <a href="{% url 'mainDashboard' %}" class="list-group-item list-group-item-action bg-light">
@@ -98,14 +98,8 @@
                 <a href="{% url 'studentManagement' %}" class="list-group-item list-group-item-action bg-light">
                     <i class="fas fa-user-graduate"></i> Manage Student
                 </a>
-                <a href="#" class="list-group-item list-group-item-action bg-light">
-                    <i class="fas fa-chart-line"></i> Reports
-                </a>
                 <a href="{% url 'timeSheet' %}" class="list-group-item list-group-item-action bg-light">
                     <i class="fas fa-clock"></i> Time Sheet
-                </a>
-                <a href="#" class="list-group-item list-group-item-action bg-light">
-                    <i class="fas fa-graduation-cap"></i> Grades
                 </a>
                 <a href="#" class="list-group-item list-group-item-action bg-light">
                     <i class="fas fa-cogs"></i> Settings
