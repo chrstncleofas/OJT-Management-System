@@ -3,6 +3,7 @@ from django.conf import settings
 from django.utils import timezone
 from django.contrib import messages
 from app.models import Announcement
+from django.utils.timezone import now
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
@@ -73,53 +74,28 @@ def mainPageForDashboard(request) -> HttpResponse:
 def TimeInAndTimeOut(request):
     user = request.user
     student = get_object_or_404(DataTableStudents, user=user)
-    current_time = timezone.now()
-    day_of_week = current_time.strftime('%A')
-
-    next_schedule = None  # Initialize next_schedule as None
 
     if request.method == 'POST':
         form = TimeLogForm(request.POST, request.FILES)
         if form.is_valid():
-            try:
-                schedule = Schedule.objects.get(student=student, day=day_of_week)
-            except Schedule.DoesNotExist:
-                schedule = None
-
             time_log = form.save(commit=False)
             time_log.student = student
             time_log.duration = 0
             time_log.timestamp = timezone.now()
-
-            if schedule:
-                time_log.start_time = schedule.start_time
-                time_log.end_time = schedule.end_time
-
             time_log.save()
             messages.success(request, f'Time {time_log.action} recorded successfully with image.')
-
-            # Fetch next schedule after successful time in/out
-            if time_log.action == 'IN':  # Check if the action is 'IN'
-                schedules = Schedule.objects.filter(student=student).order_by('day')
-                days_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-                current_day_index = days_order.index(day_of_week)
-                for schedule in schedules:
-                    schedule_day_index = days_order.index(schedule.day)
-                    if schedule_day_index > current_day_index:
-                        next_schedule = schedule
-                        break
-                if not next_schedule and schedules.exists():
-                    next_schedule = schedules.first()
-
             return redirect('students:TimeInAndTimeOut')
         else:
             messages.error(request, 'Failed to record time. Please ensure the form is filled out correctly.')
     else:
         form = TimeLogForm()
 
+    current_time = now()
+
     firstName = student.Firstname
     lastName = student.Lastname
     time_logs = TimeLog.objects.filter(student=student).order_by('-timestamp')
+    full_schedule = Schedule.objects.filter(student=student, day__in=['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']).order_by('id')
 
     return render(
         request,
@@ -130,7 +106,7 @@ def TimeInAndTimeOut(request):
             'time_logs': time_logs,
             'current_time': current_time,
             'form': form,
-            'next_schedule': next_schedule,  # Pass next_schedule to the template
+            'full_schedule': full_schedule
         }
     )
 
