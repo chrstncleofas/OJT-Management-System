@@ -1,7 +1,8 @@
 from django import forms
-from .models import Announcement
+from app.models import Announcement
+from app.models import RenderingHoursTable
 from django.contrib.auth import get_user_model
-from .custom_widgets import CustomClearableFileInput
+from app.custom_widgets import CustomClearableFileInput
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import PasswordChangeForm
 
@@ -105,3 +106,27 @@ class EditUsersDetailsForm(forms.ModelForm):
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
         }
+
+
+class RenderingHoursForm(forms.ModelForm):
+    class Meta:
+        model = RenderingHoursTable
+        fields = ['course', 'required_hours']
+        widgets = {
+            'course': forms.Select(attrs={'class': 'form-control'}),
+            'required_hours': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+
+class SetRenderingHoursForm(forms.Form):
+    bsit_hours = forms.IntegerField(
+        label='BS Information Technology Required Hours',
+        required=True,
+        min_value=0,
+        widget=forms.NumberInput(attrs={'class': 'form-control'})
+    )
+    bscs_hours = forms.IntegerField(
+        label='BS Computer Science Required Hours',
+        required=True,
+        min_value=0,
+        widget=forms.NumberInput(attrs={'class': 'form-control'})
+    )

@@ -65,7 +65,7 @@
 <body>
     <div class="d-flex" id="wrapper">
         <!-- Sidebar -->
-        <div class="bg-light border-right" id="sidebar-wrapper">
+        <div class="bg-light border-right vh-100" id="sidebar-wrapper">
             <div class="sidebar-heading">OJT Management System</div>
             <div class="list-group list-group-flush">
                 <a href="{% url 'mainDashboard' %}" class="list-group-item list-group-item-action bg-light">
@@ -115,7 +115,12 @@
                 </div>
             </nav>
             <div class="container-fluid">
-                
+                <h2>Set Rendering Hours</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
             </div>
         </div>
     </div>

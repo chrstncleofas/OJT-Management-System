@@ -29,7 +29,7 @@
                 <a href="{% url 'timeSheet' %}" class="list-group-item list-group-item-action bg-light">
                     <i class="fas fa-clock"></i> Time Sheet
                 </a>
-                <a href="#" class="list-group-item list-group-item-action bg-light">
+                <a href="{% url 'set_rendering_hours' %}" class="list-group-item list-group-item-action bg-light">
                     <i class="fas fa-cogs"></i> Settings
                 </a>
                 <a href="{% url 'logout' %}" class="list-group-item list-group-item-action bg-light">
@@ -62,7 +62,42 @@
             </nav>
             <!-- Card -->
             <div class="container-fluid">
-                <h2 class="mt-4">Announcement</h2>
+                <div class="row mb-4">
+                    <div class="col-lg-12">
+                        <p class="mt-3 mb-1">Home / Announcement</p>
+                        <h3 class="mt-2 mb-2">Announcement</h3>
+                    </div>
+                    <!-- Date Filter -->
+                    <div class="col-lg-12 d-flex justify-content-end align-items-center mb-3">
+                        <!-- Date Filter Buttons -->
+                        <div class="btn-group btn-group-toggle mr-3" data-toggle="buttons">
+                            <label class="btn btn-light border rounded mr-1">
+                                <input type="radio" name="dateFilter" id="today" autocomplete="off"> Today
+                            </label>
+                            <label class="btn btn-light border rounded mr-1">
+                                <input type="radio" name="dateFilter" id="yesterday" autocomplete="off"> Yesterday
+                            </label>
+                            <label class="btn btn-light border rounded mr-1">
+                                <input type="radio" name="dateFilter" id="week" autocomplete="off"> Week
+                            </label>
+                            <label class="btn btn-light border rounded mr-1">
+                                <input type="radio" name="dateFilter" id="month" autocomplete="off"> Month
+                            </label>
+                        </div>
+                        <!-- Start Date and End Date Inputs -->
+                        <div class="form-inline">
+                            <div class="form-group mr-1">
+                                <label for="start-date" class="sr-only">Start Date</label>
+                                <input type="date" class="form-control" id="start-date" placeholder="Start Date">
+                            </div>
+                            <div class="form-group mr-1">
+                                <label for="end-date" class="sr-only">End Date</label>
+                                <input type="date" class="form-control" id="end-date" placeholder="End Date">
+                            </div>
+                            <button type="button" class="btn btn-primary">Filter</button>
+                        </div>
+                    </div>
+                </div>
                 <div class="d-flex justify-content-between mb-3 mt-3">
                     <form class="form-inline">
                         <div class="input-group">

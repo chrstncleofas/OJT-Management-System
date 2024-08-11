@@ -1,6 +1,8 @@
 import json
 from typing import Union
 from django.urls import reverse
+from app.forms import SetRenderingHoursForm
+from app.models import RenderingHoursTable
 from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
@@ -266,12 +268,11 @@ def viewPendingApplication(request, id):
 
 
 def viewTimeLogs(request, student_id):
+    user = request.user
+    admin = get_object_or_404(CustomUser, id=user.id)
     student = get_object_or_404(DataTableStudents, id=student_id)
-    firstName = student.Firstname
-    lastName = student.Lastname
-    time_logs = []
-    total_hours = 0
-    required_hours = 600
+    firstName = admin.first_name
+    lastName = admin.last_name
     selected_student = get_object_or_404(DataTableStudents, id=student_id)
     time_logs = TimeLog.objects.filter(student=selected_student).order_by('timestamp')
     total_work_seconds = 0
@@ -290,6 +291,9 @@ def viewTimeLogs(request, student_id):
         i += 1
     total_work_seconds = daily_total.total_seconds()
     total_hours = total_work_seconds / 3600
+    required_hours = student.get_required_hours()
+    if required_hours is None:
+        required_hours = 0
     remaining_hours = required_hours - total_hours
     full_schedule = Schedule.objects.filter(student=student, day__in=['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']).order_by('id')
     context = {
@@ -301,9 +305,7 @@ def viewTimeLogs(request, student_id):
         'lastName': lastName,
         'full_schedule': full_schedule,
     }
-
     return render(request, 'app/TimeLogs.html', context)
-
 
 def viewStudentInformation(request, student_id):
     user = request.user
@@ -322,6 +324,34 @@ def viewStudentInformation(request, student_id):
             'lastName': lastName
         }
     )
+
+def set_rendering_hours(request):
+    user = request.user
+    admin = get_object_or_404(CustomUser, id=user.id)
+    firstName = admin.first_name
+    lastName = admin.last_name
+    if request.method == 'POST':
+        form = SetRenderingHoursForm(request.POST)
+        if form.is_valid():
+            bsit_hours = form.cleaned_data.get('bsit_hours')
+            bscs_hours = form.cleaned_data.get('bscs_hours')
+            RenderingHoursTable.objects.update_or_create(
+                course='BS Information Technology',
+                defaults={'required_hours': bsit_hours}
+            )
+            RenderingHoursTable.objects.update_or_create(
+                course='BS Computer Science',
+                defaults={'required_hours': bscs_hours}
+            )
+            return redirect('set_rendering_hours')
+    else:
+        form = SetRenderingHoursForm()
+
+    return render(request, 'app/settings.html', {
+        'form': form,
+        'firstName': firstName,
+        'lastName' : lastName
+    })
 
 def listOfAnnouncement(request):
     user = request.user

@@ -35,6 +35,8 @@ urlpatterns = [
     path('listOfAnnouncement', views.listOfAnnouncement, name='listOfAnnouncement'),
     path('editAnnouncement/<int:id>/', views.editAnnouncement, name='editAnnouncement'),
     path('deleteAnnouncement/<int:id>/', views.deleteAnnouncement, name='deleteAnnouncement'),
+    #
+    path('set_rendering_hours/', views.set_rendering_hours, name='set_rendering_hours'),
 ]
 
 if settings.DEBUG:
