@@ -119,13 +119,13 @@ class RenderingHoursForm(forms.ModelForm):
 
 class SetRenderingHoursForm(forms.Form):
     bsit_hours = forms.IntegerField(
-        label='BS Information Technology Required Hours',
+        label='BS Information Technology',
         required=True,
         min_value=0,
         widget=forms.NumberInput(attrs={'class': 'form-control'})
     )
     bscs_hours = forms.IntegerField(
-        label='BS Computer Science Required Hours',
+        label='BS Computer Science',
         required=True,
         min_value=0,
         widget=forms.NumberInput(attrs={'class': 'form-control'})

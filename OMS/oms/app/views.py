@@ -325,11 +325,50 @@ def viewStudentInformation(request, student_id):
         }
     )
 
+@login_required
 def set_rendering_hours(request):
     user = request.user
     admin = get_object_or_404(CustomUser, id=user.id)
     firstName = admin.first_name
     lastName = admin.last_name
+
+    if request.method == 'POST':
+        form = SetRenderingHoursForm(request.POST)
+        if form.is_valid():
+            bsit_hours = form.cleaned_data.get('bsit_hours')
+            bscs_hours = form.cleaned_data.get('bscs_hours')
+            RenderingHoursTable.objects.update_or_create(
+                course='BS Information Technology',
+                defaults={'required_hours': bsit_hours}
+            )
+            RenderingHoursTable.objects.update_or_create(
+                course='BS Computer Science',
+                defaults={'required_hours': bscs_hours}
+            )
+            return redirect('set_rendering_hours')
+    else:
+        try:
+            bsit_hours = RenderingHoursTable.objects.get(course='BS Information Technology').required_hours
+        except RenderingHoursTable.DoesNotExist:
+            bsit_hours = None
+
+        try:
+            bscs_hours = RenderingHoursTable.objects.get(course='BS Computer Science').required_hours
+        except RenderingHoursTable.DoesNotExist:
+            bscs_hours = None
+
+        form = SetRenderingHoursForm(initial={
+            'bsit_hours': bsit_hours,
+            'bscs_hours': bscs_hours,
+        })
+
+    return render(request, 'app/settings.html', {
+        'form': form,
+        'firstName': firstName,
+        'lastName': lastName
+    })
+
+def editRenderHours(request):
     if request.method == 'POST':
         form = SetRenderingHoursForm(request.POST)
         if form.is_valid():
@@ -349,8 +388,6 @@ def set_rendering_hours(request):
 
     return render(request, 'app/settings.html', {
         'form': form,
-        'firstName': firstName,
-        'lastName' : lastName
     })
 
 def listOfAnnouncement(request):
