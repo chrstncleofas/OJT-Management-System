@@ -8,8 +8,7 @@ if os.path.exists('.env'):
 
 # Security settings
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-1q^_u(40*=ydaz*%lz0v&2rt0-b0(b$q)-_=!u#d9!5&1n0zyo')
-# DEBUG = config('DEBUG', default=False, cast=bool)
-DEBUG = True
+DEBUG = config('DEBUG', default=True, cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=Csv())
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -83,12 +82,24 @@ WSGI_APPLICATION = 'backend_side.wsgi.application'
 # }
 
 # --- Local Configuration Database ------ #
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': config('POSTGRES_DB'),
+#         'USER': config('POSTGRES_USER'),
+#         'PASSWORD': config('POSTGRES_PASSWORD'),
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
+
+# --- Local Configuration Database ------ #
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('POSTGRES_DB'),
-        'USER': config('POSTGRES_USER'),
-        'PASSWORD': config('POSTGRES_PASSWORD'),
+        'NAME': 'OJT',
+        'USER': 'postgres',
+        'PASSWORD': 'password',
         'HOST': 'localhost',
         'PORT': '5432',
     }

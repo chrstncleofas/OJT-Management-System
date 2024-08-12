@@ -290,17 +290,23 @@ def viewTimeLogs(request, student_id):
                 i += 1
         i += 1
     total_work_seconds = daily_total.total_seconds()
-    total_hours = total_work_seconds / 3600
-    required_hours = student.get_required_hours()
-    if required_hours is None:
-        required_hours = 0
-    remaining_hours = required_hours - total_hours
+    required_hours_seconds = student.get_required_hours() * 3600 if student.get_required_hours() is not None else 0
+    remaining_hours_seconds = required_hours_seconds - total_work_seconds
     full_schedule = Schedule.objects.filter(student=student, day__in=['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']).order_by('id')
+
+    def format_seconds(seconds):
+        hours, remainder = divmod(seconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        return f"{int(hours)} hours, {int(minutes)} minutes, {int(seconds)} seconds"
+
     context = {
         'paired_logs': paired_logs,
-        'total_hours': total_hours,
-        'required_hours': required_hours,
-        'remaining_hours': remaining_hours,
+        'total_work_seconds': total_work_seconds,
+        'required_hours_seconds': required_hours_seconds,
+        'remaining_hours_seconds': remaining_hours_seconds,
+        'total_work_time': format_seconds(total_work_seconds),
+        'required_hours_time': format_seconds(required_hours_seconds),
+        'remaining_hours_time': format_seconds(remaining_hours_seconds),
         'firstName': firstName,
         'lastName': lastName,
         'full_schedule': full_schedule,
