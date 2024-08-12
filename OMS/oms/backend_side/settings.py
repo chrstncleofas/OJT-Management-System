@@ -94,27 +94,27 @@ WSGI_APPLICATION = 'backend_side.wsgi.application'
 # }
 
 # --- Local Configuration Database ------ #
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'OJT',
-#         'USER': 'postgres',
-#         'PASSWORD': 'password',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'OJT',
-        'USER': 'ojtUser',
-        'PASSWORD': 'newpassword',
+        'USER': 'postgres',
+        'PASSWORD': 'password',
         'HOST': 'localhost',
         'PORT': '5432',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'OJT',
+#         'USER': 'ojtUser',
+#         'PASSWORD': 'newpassword',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
