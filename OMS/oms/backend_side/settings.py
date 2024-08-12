@@ -110,7 +110,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'OJT',
         'USER': 'ojtUser',
-        'PASSWORD': 'password',
+        'PASSWORD': 'newpassword',
         'HOST': 'localhost',
         'PORT': '5432',
     }
